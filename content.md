@@ -48,6 +48,23 @@ Q: Topic: What kind of topic are you interested in ?
 ## Direct Code Execution in a nutshell
 
 >>>
+
+## What does it look like ?
+
+- Lightweight virtualization of kernel and application processes, interconnected by simulated networks
+
+- Benefits
+ - Implementation realism
+ - in controlled topologies or wireless environments
+ - Model availability
+ - Debugging a whole network within a single process
+
+- Limitations
+ - Not as scalable as pure simulation
+ - Tracing more limited
+ - Configuration different
+
+>>>
 ## Why Direct Code Execution ?
 
 1. You want to investigate a protocol, but the model **isn't available**,
@@ -64,7 +81,7 @@ This will only display in the notes window.
 
 >>>
 
-## A couple of history
+## A brief history
 
 - Initial discussion (ns-3 goals)
  - Started around 2007 (Lacage)
@@ -73,23 +90,6 @@ This will only display in the notes window.
  - 7 times official release since April 2013
  - along with ns-3 release (i.e., ns-3.23 == dce-1.6)
 
-
->>>
-
-## What does it look like ?
-
-- Lightweight virtualization of kernel and application processes, interconnected by simulated networks
-
-- Benefits
- - Implementation realism
- - in controlled topologies or wireless environments
- - Model availability
- - Debugging a whole network within a single process
-
-- Limitations
- - Not as scalable as pure simulation
- - Tracing more limited
- - Configuration different
 
 >>>
 
@@ -173,6 +173,22 @@ function fancyAlert(arg) {
 
 >>>
 
+## What to start with ?
+
+- Quick start (https://www.nsnam.org/docs/dce/release/1.5/manual/html/getting-started.html)
+
+```
+mkdir dce
+cd dce
+bake.py configure -e dce-linux-1.5
+bake.py download
+bake.py build
+```
+
+you can also specify *dce-ns3-1.5* instead.
+
+>>>
+
 ## Recent News
 
 - release (1.6)
@@ -186,9 +202,13 @@ function fancyAlert(arg) {
 
 ## Call for Maintainers
 
-**we're wanting to have newcomer**
+**we want to have new maintainer**
 
-**contact Hajime directly**
+- maintain a release of DCE
+- fix known bugs in Bugzilla
+- introduce new features
+
+**contact Hajime (thehajime at gmail.com) directly**
 
 ---
 
@@ -276,10 +296,13 @@ function fancyAlert(arg) {
  - in a single process
 - Use **Valgrind**
 
+<!--
 >>>
 
 ## Development platform (code coverage)
 <img src="figs/gcov.png" width="640">
+
+-->
 
 >>>
 
@@ -312,10 +335,10 @@ Note:
 
 ## Basic Workflow
 
-(FIXME)
 - Write a topology
 - Run simulation
 - Gather outputs
+- and do what you want to do
 
 ---
 
@@ -324,7 +347,7 @@ Note:
 
 >>>
 
-## Action 1 (30 mins)
+## Hands-on 1 (30 mins)
 
  ospfd on rocketfuel topology
 
@@ -349,7 +372,7 @@ Note:
 gedit ~/training/bake/source/ns-3-dce/myscripts/\
 ns-3-dce-quagga/example/dce-quagga-ospfd-rocketfuel.cc
 ```
-(FIXME)
+http://code.nsnam.org/thehajime/ns-3-dce-quagga/file/eafaa128a2fe/example/dce-quagga-ospfd-rocketfuel.cc
 
 >>>
 
@@ -358,6 +381,22 @@ ns-3-dce-quagga/example/dce-quagga-ospfd-rocketfuel.cc
 ```
 cd training/bake/source/ns-3-dce
 ./waf --run dce-quagga-ospfd-rocketfuel --vis
+```
+
+You should see the result something like below.
+
+```
+scanning topology: 79 nodes...
+scanning topology: calling graphviz layout
+scanning topology: all done.
+PING  10.0.2.18.26 56(84) bytes of data.
+64 bytes from 10.0.2.18: icmp_seq=32 ttl=63 time=8 ms
+64 bytes from 10.0.2.18: icmp_seq=33 ttl=63 time=8 ms
+64 bytes from 10.0.2.18: icmp_seq=34 ttl=63 time=8 ms
+64 bytes from 10.0.2.18: icmp_seq=35 ttl=63 time=8 ms
+64 bytes from 10.0.2.18: icmp_seq=36 ttl=63 time=8 ms
+64 bytes from 10.0.2.18: icmp_seq=37 ttl=63 time=8 ms
+64 bytes from 10.0.2.18: icmp_seq=38 ttl=63 time=8 ms
 ```
 
 >>>
@@ -388,21 +427,41 @@ cat files-0/var/log/*/cmdline
 ## Speedup the simulation
 
 - Use custom *elf-loader*, instead of the system's one
+- pass **--dlm** option to the waf
+
+```
+./waf --run ABC --dlm
+```
 
 - You should get
 
 Loader+Fiber | Time (MM:SS.ss)
 -------------|-----------------
-Cooja (non-vdl) + Pthread| 11:49.81
+Cooja (non-vdl) + Pthread (default)| 11:49.81
+Dlm (vdl) + Ucontext (with --dlm)| 2:29.21
+
+Note:
 Cooja (non-vdl) + Ucontext| 3:58.30 
 Dlm (vdl) + Pthread| 8:01.71 
-Dlm (vdl) + Ucontext| 2:29.21
 
 >>>
 
 ## Customize the script
 
-(FIXME)
+- Change the topology file
+
+```
+vi ~/training/bake/source/ns-3-dce/myscripts/ns-3-dce-quagga/\
+example/3967.weights.intra
+```
+
+- Then run the simulation again
+
+```
+cd training/bake/source/ns-3-dce
+./waf --run dce-quagga-ospfd-rocketfuel --vis
+```
+
 >>>
 
 ## Summary
@@ -411,7 +470,9 @@ Dlm (vdl) + Ucontext| 2:29.21
 - Import a Rocketfuel topology (AS3967)
 - Verify the connectivity with ns3::V4Ping
 
-
+### Further steps
+- Use distributed simulator (MPI) for the speedup
+- Larger topology files
 
 ---
 
@@ -420,14 +481,14 @@ Dlm (vdl) + Ucontext| 2:29.21
 
 >>>
 
-## Action 2 (30 mins)
+## Hands-on 2 (30 mins)
 
 - Customize DCE environment out of bake installation
 
-- TCP cwnd trace with Linux kernel
-- latest Linux (Linux 4.1.0-rc1)
-- ss (in iproute2)
-- an example of DCE simulation *extending* pre-installed modules
+- **TCP cwnd** trace with Linux kernel
+ - latest Linux (Linux 4.1.0-rc1)
+ - ss (in iproute2)
+ - an example of DCE simulation *extending* pre-installed modules
 
 Note:
 - There is no available bakeconf.xml and example: need to customize by yourselves
@@ -441,7 +502,7 @@ Note:
 
 ```
 git clone --depth=1 \
- https://github.com/direct-code-execution/net-next-sim
+ https://github.com/direct-code-execution/net-next-sim -b wns3-2015
 git clone --depth=1 \
  https://git.kernel.org/pub/scm/linux/kernel/git/shemminger/iproute2.git
 ```
