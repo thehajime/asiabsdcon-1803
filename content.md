@@ -253,8 +253,9 @@ function fancyAlert(arg) {
 <img src="figs/dnssec-topo.png" width="380">
 <img src="figs/dnssec-resptime-plot.png" width="440">
 
-- bind9 zone file => named.conf/unbound.conf (by *createzones*)
-- run bind9/unbound (*named*, *dig*, etc) with key-signed operation
+- bind9 querylog => named.conf/unbound.conf (by *createzones*)
+ - contains 1000 queries (max.) => 581 zones
+- run bind9/unbound (named, dig, etc) **with/without** DNSSEC	
 - see how response time will be changed
 - available at a private repository (http://dnssec.sekiya-lab.info)
 
@@ -582,6 +583,15 @@ gnuplot> plot "/tmp/cwnd.dat" using 0:($1*1446) \
 <img src="figs/linux-reno-cwnd.png" width="550">
 
 ### Voila ! <!-- .element: class="fragment" data-fragment-index="1" -->
+
+>>>
+
+## What's next ?
+
+- provide a *bakeconf.xml*
+ - **to be reproducible in the future**
+
+- not part of this tutorial :)
 
 >>>
 
