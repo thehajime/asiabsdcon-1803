@@ -49,7 +49,7 @@ Q: Topic: What kind of topic are you interested in ?
 
 >>>
 
-## What does it look like ?
+## What is Direct Code Execution ?
 
 - Lightweight virtualization of kernel and application processes, interconnected by simulated networks
 
@@ -65,13 +65,15 @@ Q: Topic: What kind of topic are you interested in ?
  - Configuration different
 
 >>>
-## Why Direct Code Execution ?
+## Why DCE ?
 
-1. You want to investigate a protocol, but the model **isn't available**,
+1. You want to investigate a protocol, but the **model isn't available**,
 2. You don't want to **maintain two versions of implementation** btw/ ns-3 and (UNIX/POSIX) socket applications,
 3. You want to evaluate a protocol implemented in Linux kernel, but
- - it *doesn't scale* much (computation resource of VM)
- - or you want to conduct a (fully) *reproducible experiment*
+ - it **doesn't scale** much (computation resource of VM)
+ - or you want to conduct a (fully) **reproducible experiment**
+
+# 
 
   
 ### DCE helps you !
@@ -96,9 +98,9 @@ This will only display in the notes window.
 ## High-level Overview
 <img src="figs/stack-apps-variants.png" width="1000">
 
-- POSIX application on ns-3
-- Linux/FreeBSD kernel on ns-3
-- ns-3 Application with Linux/FreeBSD kernel (DCE Cradle)
+- POSIX application on ns-3 [Lacage 10]
+- Linux/FreeBSD kernel on ns-3 [Lacage 10]
+- ns-3 Application with Linux/FreeBSD kernel [Tazaki 13]
 
 >>>
 
@@ -120,6 +122,26 @@ This will only display in the notes window.
 - Run with ns-3
  - Load the executables (binary, library) in an isolated environment among nodes
  - synchronize simulation clocks with apps/kernels clock
+
+>>>
+## What to start with ?
+
+- Quick start with *bake* tool
+ - https://www.nsnam.org/docs/dce/release/1.5/manual/html/getting-started.html
+
+- 3 modes
+ - dce-ns3-|version| (basic mode)
+ - dce-linux-|version| (advanced mode)
+ - dce-freebsd-|version| (*experimental*)
+
+```
+mkdir dce
+cd dce
+bake.py configure -e dce-linux-1.5
+bake.py download
+bake.py build
+```
+
 
 >>>
 ## How to use it ?
@@ -165,29 +187,16 @@ function fancyAlert(arg) {
 
 >>>
 
+<!--
+
 ## When is it useful ?
 
 - more realistic simulation (see DCE Cradle paper[3])
 - less development effort
 - (also) to improve the quality of the real-world code (as a debug/test platform) (see CoNEXT paper[2])
-
 >>>
+-->
 
-## What to start with ?
-
-- Quick start (https://www.nsnam.org/docs/dce/release/1.5/manual/html/getting-started.html)
-
-```
-mkdir dce
-cd dce
-bake.py configure -e dce-linux-1.5
-bake.py download
-bake.py build
-```
-
-you can also specify *dce-ns3-1.5* instead.
-
->>>
 
 ## Recent News
 
@@ -218,12 +227,12 @@ you can also specify *dce-ns3-1.5* instead.
 
 ## Features/Functions
 
-- less development effort
+1. **less development effort**
  - quagga, umip, ccnx, bind9, etc
  - Linux kernel (SCTP, DCCP, IPv4/v6), FreeBSD 10.0 kernel (partialy)
  - Out-of-tree Linux kernel Multi-path TCP
-- **reproducible** environment for Linux kernel experiment
-- development platform
+2. **reproducible environment** for Linux kernel experiment
+3. **development platform**
  - debugging facility (gdb, valgrind)
  - code coverage (gcov, etc)
 
@@ -272,6 +281,8 @@ you can also specify *dce-ns3-1.5* instead.
 - no significant goodput improvement with buffer size when DCE in single TCP
 - Max goodput range: 2.2 - 2.9Mbps (DCE)  2.0 - 3.2Mbps (NSDI)
 
+**See more detail in our CoNEXT paper (2013) [2]**
+
 >>>
 
 ## Development platform (gdb)
@@ -310,35 +321,6 @@ you can also specify *dce-ns3-1.5* instead.
 
 <img src="figs/jenkins.png" width="800">
 
->>>
-
-## Combinations
-
-basic mode (ns-3 stack) and advanced mode (Linux stack)
-
-- ns-3 stack < Linux
- - Linux is more compatible with POSIX apps
- - e.g., more sockopts, full netlink
-- ns-3 stack > Linux
- - Tracing features
- - simulation speed
-
-Note:
-- ns-3
- - abstract implementation
- - lightweight
-- DCE (common)
- - realistic
- -
-
->>>
-
-## Basic Workflow
-
-- Write a topology
-- Run simulation
-- Gather outputs
-- and do what you want to do
 
 ---
 
@@ -451,15 +433,15 @@ Dlm (vdl) + Pthread| 8:01.71
 - Change the topology file
 
 ```
-vi ~/training/bake/source/ns-3-dce/myscripts/ns-3-dce-quagga/\
-example/3967.weights.intra
+head -8 ~/training/bake/source/ns-3-dce/myscripts/ns-3-dce-quagga/\
+example/3967.weights.intra > topo8.dat
 ```
 
 - Then run the simulation again
 
 ```
 cd training/bake/source/ns-3-dce
-./waf --run dce-quagga-ospfd-rocketfuel --vis
+./waf --run "dce-quagga-ospfd-rocketfuel --topoFile=topo8.dat" --vis
 ```
 
 >>>
@@ -483,7 +465,7 @@ cd training/bake/source/ns-3-dce
 
 ## Hands-on 2 (30 mins)
 
-- Customize DCE environment out of bake installation
+- Customize DCE environment from bake installation
 
 - **TCP cwnd** trace with Linux kernel
  - latest Linux (Linux 4.1.0-rc1)
@@ -539,9 +521,11 @@ ln -s -f libsim-linux-4.1.0-rc1.so liblinux.so
 ```
 cd iproute2
 ./configure
+
 CFLAGS+=-fpic CFLAGS+=" -D_GNU_SOURCE" CFLAGS+=" -O0" CFLAGS+="\
  -U_FORTIFY_SOURCE" CFLAGS+=" -g" LDFLAGS=-pie \
  LDFLAGS+=" -rdynamic" make
+
 cp misc/ss ~/training/bake/build/sbin/
 ```
 
@@ -603,8 +587,10 @@ gnuplot> plot "/tmp/cwnd.dat" using 0:($1*1446) \
 
 ## Summary
 
-- Congestion window trace with Linux TCP stack
+- Congestion window trace with Linux TCP stack (**on top of ns-3!!**)
+
 - How to customize DCE which was installed by bake
+
 - this contents will be included in future DCE release
 
 ---
@@ -624,7 +610,12 @@ gnuplot> plot "/tmp/cwnd.dat" using 0:($1*1446) \
  - Real-world program is not always familiar with ns-3
  - not integrated with (ns-3) script/helper
  - sparse documents/tools/output
- - but you will get certain benefits !
+
+- But it's definitelly useful
+ - no need to develop a model
+ - improve a realism
+ - always reproducible
+ - you will get certain benefits !
 
 >>>
 
@@ -634,6 +625,7 @@ gnuplot> plot "/tmp/cwnd.dat" using 0:($1*1446) \
 - [2] Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, CoNEXT 2013
 - [3] Tazaki et al. DCE Cradle: Simulate Network Protocols with Real Stacks for Better Realism, WNS3 2013
 - [4] Camara et al. DCE: Test the Real Code of Your Protocols and Applications over Simulated Networks, IEEE Communications Magazine, March 2014
+- [5] Sekiya et al. DNSSEC simulator for realistic estimation of deployment impacts. IEICE ComEX(3):10, 2014.
 
 ### Contact
 
