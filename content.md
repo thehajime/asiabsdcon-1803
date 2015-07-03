@@ -1,47 +1,141 @@
-# ns-3 Direct Code Execution tutorial
+# Linux library operating system (LibOS)
 
 Hajime Tazaki (University of Tokyo)
 
-12th May, 2015
+3rd July, 2015
+at UCL, (Louvain La Nouve, Belgium)
 
 ---
 
-## Disclaimer (excuse ?)
+## Who am I ?
 
-- This tutorial is based on dce-1.5 and ns-3.22, the contents would be changed as DCE right now has usability issues....
-- Point here is *to smell the potentials of DCE*
-- You can do whatever you want **IF** you devote certain amount of brain :)
-
-- We will use the Live-CD ISO image, which includes ns-3.22 and dce-1.5 modules.
-
-https://www.nsnam.org/wiki/AnnualTraining2015
-
->>>
-
-## Survey report
-
-Q: Topic: What kind of topic are you interested in ?
-
- Topic | count | ratio
- ----|-------|-----------
- TCP in general | 4 | 66.7%
- Routing protocols (e.g. quagga) | 4 | 66.7%
- Custom Linux kernel network stack | 4 | 66.7%
- FreeBSD kernel network stack | 2 | 33.3%
- Linux Multipath TCP | 1 | 16.7%
- Other | 3 | 50%
+- Hajime Tazaki
+ - Ph.D (2011, supervised by Jun Murai)
+- A project lecturer at University of Tokyo
+ - NECOMA project (EU FP7/Japan co-project)
+- Interests
+ - freeform networks (mobile/ad-hoc network architectures)
+ - network experimental method
+- **(in fact) just a code monkey**  <!-- .element: class="fragment" data-fragment-index="1" -->
 
 >>>
 
-## Recipe
+## agenda
 
-- DCE in a nutshell (10 mins)
-- Showcases (10 mins)
-- Hands-on (60 mins)
- - Quagga ospfd
- - Linux TCP congestion window trace
-- Q&A (you can interrupt anytime)
+- What is Linux Library OS ?
+- When it is useful ?
+ - Direct Code Execution
+ - Network Stack in Userspace
+- What's going to be in near future ?
+- Summary
 
+
+---
+
+## The Linux Library operating system
+
+- A **library version** of Linux kernel
+- The idea is not brand-new technology (since 90's from MIT)
+- ability to link **a single subsystem** to an application
+ - only network stack at the present moment
+- proposed to Linux upstream, now improving the paches
+- LWN featured (http://lwn.net/Articles/639333/)
+
+
+>>>
+
+## Network stacks ?
+
+- Why kernel space ?
+ - (Unit price of) packets were **expensive** at the beginning
+- Why not **userspace** ?
+ - well grown in decades, costs degrades
+ - obtain **network stack personality**
+ - **controllable** by userspace utilities
+
+refs: https://fosdem.org/2015/interviews/2015-antti-kantee/
+
+>>>
+
+## What's the matter ?
+
+- we (at least myself) don't want to **reimplement** the whole features
+ - breaks inter-operability
+ - waste of time
+ - lack of flexibility/controllability
+- network stack is just a bunch of C code <!-- .element: class="fragment" data-fragment-index="1" -->
+
+# 
+
+### **why not reuse it (rather than reimplement it) ?**  <!-- .element: class="fragment" data-fragment-index="2" -->
+
+>>>
+
+<!-- .slide: data-background="figs/cs-thomas.png" -->
+
+"Any problem in computer science can be solved with another level of ***indirection***." 
+(Wheeler and/or Lampson)
+
+
+
+
+
+
+img src: https://www.flickr.com/photos/thomasclaveirole/305073153
+
+>>>
+
+## Architecture
+
+<img src="figs/libos-arch.png" width="400">
+
+* Host backend layer
+* Kernel layer
+* POSIX glue layer
+
+>>>
+
+## Execution Model
+
+- a single entry point via API (i.e., lib_init())
+- dlmopen(3) and LD_PRELOAD
+
+
+>>>
+
+## Applications
+
+- Direct Code Execution (DCE)
+ - An integration with network simulator (ns-3)
+ - A testing platform for (kernel) network stack
+- Network Stack in Userspace (NUSE)
+ - network stack personality (ad-hoc network stack)
+
+>>>
+
+## Alternatives
+
+- Container (LXC, OpenVZ, vimage)
+ - share kernel with host operating system (no flexibility)
+- Userspace virtualization (user mode linux = UML)
+ - need full virtualization
+ - rely on the *underlying* Linux features
+- other Library OSs
+ - full scratch: mtcp, Mirage, lwIP
+ - Porting: OSv, Sandstorm, libuinet (FreeBSD), Arrakis (lwIP), OpenOnload (lwIP?)
+ - Glue-layer: LKL (Linux-2.6), rumpkernel (NetBSD), ours (Linux LibOS)
+
+>>>
+
+## History
+
+- Initial discussion, 2006 (ns-3 goals, by Mathieu Lacage, INRIA)
+- DCE implementation
+ - Started around 2007 (Mathieu Lacage)
+ - GSoC 2008 (Quagga/Netlink bridge)
+ - almost 8 years old
+- A forked project, NUSE with Linux LibOS, started, 2014
+ - network stack part is shared btw/ NUSE and DCE
 
 ---
 
@@ -54,9 +148,10 @@ Q: Topic: What kind of topic are you interested in ?
 - Lightweight virtualization of kernel and application processes, interconnected by simulated networks
 
 - Benefits
- - Implementation realism
- - in controlled topologies or wireless environments
- - Model availability
+ - Implementation **realism**
+ - in **controlled topologies** (including wireless environments)
+ - Model **availability**
+ - fully **reproducible**
  - Debugging a whole network within a single process
 
 - Limitations
@@ -65,35 +160,37 @@ Q: Topic: What kind of topic are you interested in ?
  - Configuration different
 
 >>>
+
+## Demo
+
+- MPTCP v0.86 with ns-3-dce, 8 sub flows 
+ - https://www.youtube.com/watch?v=fN_nv7RdFm8
+
+- MPTCP over LTE (IPv4) and Wi-Fi (IPv6) 
+ - https://www.youtube.com/watch?v=rvF-yreZElQ
+
+
+
+>>>
 ## Why DCE ?
 
 1. You want to investigate a protocol, but the **model isn't available**,
 2. You don't want to **maintain two versions of implementation** btw/ ns-3 and (UNIX/POSIX) socket applications,
 3. You want to evaluate a protocol implemented in Linux kernel, but
- - it **doesn't scale** much (computation resource of VM)
+ - you need many nodes with high-volumed traffic (which **doesn't scale** coz computation resource of VM)
  - or you want to conduct a (fully) **reproducible experiment**
+
 
 # 
 
   
-### DCE helps you !
+### DCE helps you (tm) ! <!-- .element: class="fragment" data-fragment-index="1" -->
 
 Note:
 This will only display in the notes window.
 
 >>>
 
-## A brief history
-
-- Initial discussion (ns-3 goals)
- - Started around 2007 (Lacage)
- - GSoC 2008 (Quagga/Netlink bridge)
-- almost 8 years old
- - 7 times official release since April 2013
- - along with ns-3 release (i.e., ns-3.23 == dce-1.6)
-
-
->>>
 
 ## High-level Overview
 <img src="figs/stack-apps-variants.png" width="1000">
@@ -127,7 +224,7 @@ This will only display in the notes window.
 ## What to start with ?
 
 - Quick start with *bake* tool
- - https://www.nsnam.org/docs/dce/release/1.5/manual/html/getting-started.html
+ - https://www.nsnam.org/docs/dce/release/1.6/manual/html/getting-started.html
 
 - 3 modes
  - dce-ns3-|version| (basic mode)
@@ -137,7 +234,7 @@ This will only display in the notes window.
 ```
 mkdir dce
 cd dce
-bake.py configure -e dce-linux-1.5
+bake.py configure -e dce-linux-1.6
 bake.py download
 bake.py build
 ```
@@ -187,39 +284,79 @@ function fancyAlert(arg) {
 
 >>>
 
-<!--
+## DCE as a development platform of Linux network stack
 
-## When is it useful ?
-
-- more realistic simulation (see DCE Cradle paper[3])
-- less development effort
-- (also) to improve the quality of the real-world code (as a debug/test platform) (see CoNEXT paper[2])
->>>
--->
-
-
-## Recent News
-
-- release (1.6)
- - will be released very soon
-- Linux upstream
- - posted lkml on March 2015, on the review
- - LWN featured (http://lwn.net/Articles/639333/)
-
+- Testing network stack with nightly/each commit
+- Measuring testing code coverage
+- Debug with gdb or valgrind
 
 >>>
 
-## Call for Maintainers
+## Development platform (gdb)
 
-**we want to have new maintainer**
+<img src="figs/umip-gdb-topo.png" width="440">
+<img src="figs/umip-gdb.png" width="440">
 
-- maintain a release of DCE
-- fix known bugs in Bugzilla
-- introduce new features
+- Inspect codes during experiments
+ - among distributed nodes
+ - in a single process
+- perform a simulation to reproduce a bug
+- see how badly handling a packets in Linux kernel
 
-**contact Hajime (thehajime at gmail.com) directly**
 
----
+<span>
+http://yans.pl.sophia.inria.fr/trac/DCE/wiki/GdbDce
+</span>
+
+>>>
+
+## Development platform (valgrind)
+
+<img src="figs/valgrind.png" width="640">
+
+- Memory error detection
+ - among distributed nodes
+ - in a single process
+- Use **Valgrind**
+
+<span>
+http://yans.pl.sophia.inria.fr/trac/DCE/wiki/Valgrind
+</span>
+
+>>>
+
+## Development platform (code coverage)
+
+<img src="figs/gcov.png" width="1000">
+
+<span>
+http://yans.pl.sophia.inria.fr/trac/DCE/wiki/MptcpCoverageTest
+</span>
+
+>>>
+
+## Development platform (Jenkins CI)
+
+<img src="figs/jenkins.png" width="800">
+
+http://ns-3-dce.cloud.wide.ad.jp/jenkins/job/daily-net-next-sim/
+
+>>>
+
+## Detected kernel bugs (at netdev)
+
+- [v3] ipv6: Fix protocol resubmission (v4.1-rc7)
+ - patchwork: http://patchwork.ozlabs.org/patch/482645/
+ - detected by: http://ns-3-dce.cloud.wide.ad.jp/jenkins/job/umip-net-next/716/
+- [net-next] ipv6: Check RTF_LOCAL on rt->rt6i_flags instead of rt->dst.flags
+ - patchwork: http://patchwork.ozlabs.org/patch/467447/
+ - detected by: http://ns-3-dce.cloud.wide.ad.jp/jenkins/job/daily-net-next-sim/878/
+- [net-next] xfrm6: Fix a offset value for network header in _decode_session6 (v3.19-rc7?)
+ - patchwork: http://patchwork.ozlabs.org/patch/436351/
+
+
+
+>>>
 
 # DCE Showcases
 
@@ -246,11 +383,17 @@ function fancyAlert(arg) {
 - with a small amount of code (~10 LoC)!
 - and the results are promising
 
+<span>
+
+- https://www.nsnam.org/docs/dce/manual/html/dce-cradle-usecase-4.html
+- Tazaki et al. DCE Cradle: Simulate Network Protocols with Real Stacks for Better Realism, WNS3 2013
+</span>
+
 >>>
 
 ## Less development effort (DNS/DNSSEC)
 
-<img src="figs/dnssec-topo.png" width="380">
+<img src="figs/dnssec-topo.png" width="300">
 <img src="figs/dnssec-resptime-plot.png" width="440">
 
 - bind9 querylog => named.conf/unbound.conf (by *createzones*)
@@ -258,6 +401,10 @@ function fancyAlert(arg) {
 - run bind9/unbound (named, dig, etc) **with/without** DNSSEC	
 - see how response time will be changed
 - available at a private repository (http://dnssec.sekiya-lab.info)
+
+<span font-size="8pt">
+Paper: Sekiya et al. DNSSEC simulator for realistic estimation of deployment impacts. IEICE ComEX(3):10, 2014.
+</span>
 
 >>>
 
@@ -279,337 +426,94 @@ function fancyAlert(arg) {
 3. configure an ns-3 scenario **with** the same software (Linux/iperf)
 
 
-- no significant goodput improvement with buffer size when DCE in single TCP
+- no significant goodput improvement with buffer size when DCE
 - Max goodput range: 2.2 - 2.9Mbps (DCE)  2.0 - 3.2Mbps (NSDI)
 
-**See more detail in our CoNEXT paper (2013) [2]**
+<span>
 
->>>
-
-## Development platform (gdb)
-
-<img src="figs/umip-gdb-topo.png" width="440">
-<img src="figs/umip-gdb.png" width="440">
-
-- Inspect codes during experiments
- - among distributed nodes
- - in a single process
-- perform a simulation to reproduce a bug
-- see how badly handling a packets in Linux kernel
-
->>>
-
-## Development platform (valgrind)
-
-<img src="figs/valgrind.png" width="640">
-
-- Memory error detection
- - among distributed nodes
- - in a single process
-- Use **Valgrind**
-
-<!--
->>>
-
-## Development platform (code coverage)
-<img src="figs/gcov.png" width="640">
-
--->
-
->>>
-
-## Development platform (Jenkins CI)
-
-<img src="figs/jenkins.png" width="800">
+- Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, CoNEXT 2013
+- http://yans.pl.sophia.inria.fr/trac/DCE/wiki/MptcpNsdi12
+</span>
 
 
 ---
 
-# Hands-on 1
-### OSPF routing in a real ISP topology
+## Network Stack in Userspace (NUSE)
 
 >>>
 
-## Hands-on 1 (30 mins)
-
- ospfd on rocketfuel topology
-
-<img src="figs/rocketfuel.png" width="550">
-
->>>
-
-## Workflow
-
-*Real topology, real routing protocol*
-
-- dce-quagga-ospfd-rocketfuel.cc
-- Topology: Rocketfuel topology, AS3967, 79 nodes
-- Routing: OSPFv2 (quagga ospfd), all area 0
-- Traffic: ns3::V4Ping
+## What's NUSE ?
+- Userspace network stack running on Linux (POSIX) platform
+- Network stack personality
+- Full-featured network stack for kernel bypass technology (e.g., netmap, Intel DPDK)
+- Flexibility does matter !
 
 >>>
 
-## Script review
-
-```
-gedit ~/training/bake/source/ns-3-dce/myscripts/\
-ns-3-dce-quagga/example/dce-quagga-ospfd-rocketfuel.cc
-```
-http://code.nsnam.org/thehajime/ns-3-dce-quagga/file/eafaa128a2fe/example/dce-quagga-ospfd-rocketfuel.cc
+<img src="figs/nuse-arch.png">
 
 >>>
 
-## Run simulation
+## Outlook
+
+- Memory
+ - host malloc(3)
+- Time
+ - clock_gettime(2)
+- Network
+ - nuse-vif
+ - bound to kernel-bypass tech (raw(7), DPDK, netmap, tap)
+- IPC
+ - Multi-process support by rump_server
+ - system call proxy
+
+>>>
+
+## Execution
 
 ```
-cd training/bake/source/ns-3-dce
-./waf --run dce-quagga-ospfd-rocketfuel --vis
+% LD_PRELOAD=libnuse-linux.so ping www.google.com
 ```
 
-You should see the result something like below.
-
+call stack will be
 ```
-scanning topology: 79 nodes...
-scanning topology: calling graphviz layout
-scanning topology: all done.
-PING  10.0.2.18.26 56(84) bytes of data.
-64 bytes from 10.0.2.18: icmp_seq=32 ttl=63 time=8 ms
-64 bytes from 10.0.2.18: icmp_seq=33 ttl=63 time=8 ms
-64 bytes from 10.0.2.18: icmp_seq=34 ttl=63 time=8 ms
-64 bytes from 10.0.2.18: icmp_seq=35 ttl=63 time=8 ms
-64 bytes from 10.0.2.18: icmp_seq=36 ttl=63 time=8 ms
-64 bytes from 10.0.2.18: icmp_seq=37 ttl=63 time=8 ms
-64 bytes from 10.0.2.18: icmp_seq=38 ttl=63 time=8 ms
+ping(8)
+ socket(2)
+  nuse_socket()
+   raw(7)
+    (via host NIC)
 ```
 
 >>>
 
-## What happened ?
-
-Look at the output files generated by *simulated* processes
-
-```
-ls files-0/var/log/(pid)/
-```
-
-- under files-X/ directories
- - cmdline: executed command with the arguments
- - stdout: log output to *stdout* by the process
- - stderr: log output to *stderr* by the process
- - status: internal status information
- - syslog: (optional) syslog info if the process uses
-
-
-```
-cat files-0/var/log/*/cmdline
-```
-
+## Demo 
 
 >>>
 
-## Speedup the simulation
+## performance information (Host)
 
-- Use custom *elf-loader*, instead of the system's one
-- pass **--dlm** option to the waf
+<img src="figs/nuse-benchmark-topo-host.png" width="400">
+<img src="figs/nuse-benchmark-host.png" width="800">
 
-```
-./waf --run ABC --dlm
-```
-
-- You should get
-
-Loader+Fiber | Time (MM:SS.ss)
--------------|-----------------
-Cooja (non-vdl) + Pthread (default)| 11:49.81
-Dlm (vdl) + Ucontext (with --dlm)| 2:29.21
-
-Note:
-Cooja (non-vdl) + Ucontext| 3:58.30 
-Dlm (vdl) + Pthread| 8:01.71 
+we're not so good right now :( <!-- .element: class="fragment" data-fragment-index="1" -->
 
 >>>
 
-## Customize the script
+## performance information (L3 forwarding)
 
-- Change the topology file
+<img src="figs/nuse-benchmark-topo-router.png" width="600">
+<img src="figs/nuse-benchmark-router.png" width="800">
 
-```
-head -8 ~/training/bake/source/ns-3-dce/myscripts/ns-3-dce-quagga/\
-example/3967.weights.intra > topo8.dat
-```
-
-- Then run the simulation again
-
-```
-cd training/bake/source/ns-3-dce
-./waf --run "dce-quagga-ospfd-rocketfuel --topoFile=topo8.dat" --vis
-```
-
->>>
-
-## Summary
-
-- Quagga ospfd with QuaggaHelper
-- Import a Rocketfuel topology (AS3967)
-- Verify the connectivity with ns3::V4Ping
-
-### Further steps
-- Use distributed simulator (MPI) for the speedup
-- Larger topology files
+we're not good :( **(patches are welcome !!)** <!-- .element: class="fragment" data-fragment-index="1" -->
 
 ---
 
-# Hands-on 2
-### TCP congestion window trace with Linux kernel
+## The end of talk
 
->>>
-
-## Hands-on 2 (30 mins)
-
-- Customize DCE environment from bake installation
-
-- **TCP cwnd** trace with Linux kernel
- - latest Linux (Linux 4.1.0-rc1)
- - ss (in iproute2)
- - an example of DCE simulation *extending* pre-installed modules
-
-Note:
-- There is no available bakeconf.xml and example: need to customize by yourselves
-
->>>
-
-## Setup (Installation)
-
-- get the latest net-next-sim and iproute2 code
-- *iproute2* at least requires Linux 3.18.0 or later
-
-```
-git clone --depth=1 \
- https://github.com/direct-code-execution/net-next-sim -b wns3-2015
-git clone --depth=1 \
- https://git.kernel.org/pub/scm/linux/kernel/git/shemminger/iproute2.git
-```
-
-- obtain a script
-
-```
-wget https://gist.githubusercontent.com/thehajime/5e9e05ea2df08141ae47/raw/\
-a23387aa97b58bc13ccf96a1a208ddd387c9646f/nat-dce-tcp-ns3-nsc-comparison.cc
-mv nat-dce-tcp-ns3-nsc-comparison.cc ns-3-dce/myscripts
-```
-
-you will see nat-dce-tcp-ns3-nsc-comparison.cc
-
->>>
-
-## build net-next-sim
-
-```
-cd net-next-sim
-make defconfig ARCH=lib
-make library ARCH=lib
-cp libsim-linux-4.1.0-rc1.so ~/training/bake/build/bin_dce/
-cd ~/training/bake/build/bin_dce/
-ln -s -f libsim-linux-4.1.0-rc1.so liblinux.so
-```
-
-*1 ARCH=lib has been changed: we used ARCH=sim in the past.
-
->>>
-
-## build iproute2
-
-```
-cd iproute2
-./configure
-
-CFLAGS+=-fpic CFLAGS+=" -D_GNU_SOURCE" CFLAGS+=" -O0" CFLAGS+="\
- -U_FORTIFY_SOURCE" CFLAGS+=" -g" LDFLAGS=-pie \
- LDFLAGS+=" -rdynamic" make
-
-cp misc/ss ~/training/bake/build/sbin/
-```
-
-- the latest iproute2 (newer than 3.18.0) has full TCP_INFO support *via netlink*
-
->>>
-
-## Re-build DCE
-
-DCE requires to rebuild to adapt newer API of net-next-sim.
-
-```
-cd ns-3-dce
-hg pull -u
-./waf configure --prefix=/home/ns3/training/bake/build \
- --with-ns3=/home/ns3/training/bake/build \
- --with-elf-loader=/home/ns3/training/bake/build/lib \
- --with-libaspect=/home/ns3/training/bake/build \
- --enable-kernel-stack=/mnt/net-next-sim/arch
-./waf
-```
-
-- you need to update the latest ns-3-dce (dce-1.6) 
- - to run with the latest Linux kernel with DCE patch
-
-
->>>
-
-## Run script
-
-```
-rm -rf files-*
-./waf --run "nat-dce-tcp-ns3-nsc-comparison \
-  --transport_prot=TcpNewReno --error_p=0.001"
-```
-
-- The simulation generates TCP traffic (via LinuxSocketFdFactory: DCE Cradle)
-- 10Mbps, 45msec delay on PointToPointNetdevice
-
->>>
-
-## Generate a plot
-
-```
-grep cwnd files-0/var/log/*/stdout | sed "s/.*\(cwnd:.*\s\)ssth.*/\1/" | \
-   sed "s/.*\(cwnd:.*\s\)send.*/\1/" | \
-   sed "s/.*\(cwnd:.*\s\)lastsnd.*/\1/" | \
-   sed "s/cwnd://"  > /tmp/cwnd.dat
-gnuplot
-gnuplot> plot "/tmp/cwnd.dat" using 0:($1*1446) \
-         w lp title "Linux reno"
-```
-
-<img src="figs/linux-reno-cwnd.png" width="550">
-
-### Voila ! <!-- .element: class="fragment" data-fragment-index="1" -->
-
->>>
-
-## What's next ?
-
-- provide a *bakeconf.xml*
- - **to be reproducible in the future**
-
-- not part of this tutorial :)
-
->>>
-
-## Summary
-
-- Congestion window trace with Linux TCP stack (**on top of ns-3!!**)
-
-- How to customize DCE which was installed by bake
-
-- this contents will be included in future DCE release
-
----
-
-## The end of tutorial
-
-- Walk-through tutorial of Direct Code Execution
-- Documents, papers, examples
-- Hands-on (Quagga ospfd, Linux TCP)
+- Walk-through review of Linux LibOS
+- 2 applications
+ - DCE
+ - NUSE
 
 
 >>>
@@ -617,8 +521,7 @@ gnuplot> plot "/tmp/cwnd.dat" using 0:($1*1446) \
 ## End notes
 
 - Be patient :)
- - Real-world program is not always familiar with ns-3
- - not integrated with (ns-3) script/helper
+ - It's still a young project
  - sparse documents/tools/output
 
 - But it's definitelly useful
@@ -637,13 +540,23 @@ gnuplot> plot "/tmp/cwnd.dat" using 0:($1*1446) \
 - [4] Camara et al. DCE: Test the Real Code of Your Protocols and Applications over Simulated Networks, IEEE Communications Magazine, March 2014
 - [5] Sekiya et al. DNSSEC simulator for realistic estimation of deployment impacts. IEICE ComEX(3):10, 2014.
 
+>>>
+
 ### Contact
 
-- Web (https://www.nsnam.org/overview/projects/direct-code-execution/)
-- Mailing list (ns-3-users@googlegroups.com)
-- Github (https://github.com/direct-code-execution)
+- NUSE
+ - Web (http://libos-nuse.github.io/)
+ - Mailing list (https://groups.google.com/forum/#!forum/libos-nuse)
+ - Github (kernel) (https://github.com/libos-nuse/net-next-nuse)
+ - Github (tools) (https://github.com/libos-nuse/linux-libos-tools)
+
+- DCE
+ - Web (https://www.nsnam.org/overview/projects/direct-code-execution/)
+ - Mailing list (ns-3-users@googlegroups.com)
+ - Github (https://github.com/direct-code-execution)
 
 
 >>>
 
 # Questions ?
+
