@@ -1,7 +1,13 @@
-# Freeform Internet by (TBD)
+## Toward Freeform Internet by Rethinking Network/Software Architecture
+
+<span>
+<br>
+<br>
+<br>
+<br>
 
 Hajime Tazaki (University of Tokyo)
-
+</span>
 
 ---
 
@@ -11,7 +17,21 @@ Hajime Tazaki (University of Tokyo)
 P. Baran, On Distributed Communications Networks, IEEE Transactions on Communications Systems, 1964
 </span>
 
----
+Note:
+
+I would like to start with this figure
+
+This is my favorite picture, which was designed in 1950' by Paul
+Baran, and the Internet has been growing based on this idea, I
+believe.
+
+The key concept is 'distributed system', which 
+1) everybody can be replaced by everybody else, 
+2) everybody can do any ideas they wish
+
+
+
+>>>
 
 ## Motivation
 
@@ -25,7 +45,7 @@ technologies should be ready to answer the real problem which we faced.
 -->
 
 - by 'democratic' I meant
- - *any entities (users, software, networks) should do anything as they wish IF there is an interesting idea.*
+ - *any entities (users, software, networks) CAN do anything as they wish IF there is (even small) a concensus*
 
 Note:
 --- this is a lesson learnt from 3.11
@@ -100,6 +120,10 @@ Outline
  - solved with another indirection by dynamically translating an application code
  - end-to-end principle for network stack (toward E2E principle for OSes)
 
+Note:
+
+quick!!
+
 ---
 
 ## An experimental framework for network protocol
@@ -109,10 +133,21 @@ Toward full reproducible network experiments
 
 >>>
 <!-- .slide: class="two-floating-elements" -->
-## Direct Code Execution in a nutshell
-### (DCE)
+## Direct Code Execution (DCE) in a nutshell
+#### a framework to use actual implementation on simulations
 
 > Lightweight virtualization of kernel and application processes, interconnected by simulated networks
+
+
+1. lack of functional realism
+ - implementations conventional network simulator are **not realistic**
+2. lack of timing realism
+ - scheduler of conventional OSes are **not deterministic**
+ - an experiment is not **fully reproducible**
+3. lack of debuggability
+ - debugging bugs across multiple/distributed nodes are nightmares
+
+Note:
 
 - Benefits
  - Implementation **realism**
@@ -141,44 +176,27 @@ Note:
 
 
 >>>
-## Why DCE ?
-
-1. You want to investigate a protocol, but the **model isn't available**,
-2. You don't want to **maintain two versions of implementation** btw/ ns-3 and (UNIX/POSIX) socket applications,
-3. You want to evaluate a protocol implemented in Linux kernel, but
- - you need many nodes with high-volumed traffic (which **doesn't scale** coz computation resource of VM)
- - or you want to conduct a (fully) **reproducible experiment**
-
-
-# 
-
-  
-### DCE helps you (tm) !
-
-Note:
-This will only display in the notes window.
-
->>>
 
 ## Related Work
 ### Realtime emulation
 
 - Container Based Emulation
- - Mininet-HiFi [CoNEXT 12'] (LXC), Netkit [2014] (UML)
+ - Mininet-HiFi [CoNEXT 12'] (LXC), Netkit [TridentCOM 10'] (UML)
  - provides lightweight virtualization
- - Timing realism still limited by hardware resources
- - No debugging support
+ - Timing realism is still restricted by hardware resources
+ - No rich debugging support
 
 >>>
 
 ## Related Work
 ### Virtual time emulation
 
-- Time Dilation [NSDI’06]
- - Clock adjustment between different systems Constant time dilation factor
-- Slice Time [NSDI’12]
+- Time Dilation [NSDI 06']
+ - Clock adjustment between different systems 
+ - Constant time dilation factor
+- Slice Time [NSDI 12']
  - Uses synchronizer to adjust speeds between VMs and underlying emulated network
-- Time Travel VM (TTVM) [ATC’05]
+- Time Travel VM (TTVM) [ATC 05']
  - Support debugging with bw/fw navigation
 
 <div class="right" style="width: 20%">
@@ -206,8 +224,24 @@ This will only display in the notes window.
 
 >>>
 
+<!-- .slide: data-background="figs/cs-thomas.png" -->
 
-## Internals
+> Any problem in computer science can be solved with another level of __indirection__.
+
+>(Wheeler and/or Lampson)
+
+
+
+<br /><small>
+img src: https://www.flickr.com/photos/thomasclaveirole/305073153
+</small>
+
+
+
+>>>
+
+
+## DCE Architecture
 
 <div class="left" style="width: 50%">
 <ol>
@@ -215,6 +249,7 @@ This will only display in the notes window.
  - Use virtual (deterministic) clock of simulator<br>
  - stack/heap management<br>
  - isolation via dlmopen(3) <br>
+ - **single process model** <br>
 <li> Kernel layer<br>
  - glue codes for kernel code
 <li> POSIX glue layer<br>
@@ -249,9 +284,9 @@ This will only display in the notes window.
 
 # DCE Use cases
 
-- Replicate an existing experiment in the literature (**reproducibility**)
+- Replicate an existing experiment in the literature (**functional realism**)
 
-- Debug a complicate protocol of distributed protocol (**debuggability**)
+- Debug a complicate protocol in a distributed system (**debuggability**)
 
 >>>
 
@@ -265,7 +300,7 @@ This will only display in the notes window.
 3. configure an ns-3 scenario **with** the same software (Linux/iperf)
 
 <span>
-Reference: Raiciu et al. How hard can it be? Designing and implementing a deployable multipath tcp, USENIX NSDI’12
+Reference: Raiciu et al. How hard can it be? Designing and implementing a deployable multipath tcp, *USENIX NSDI 12'*
 </span>
 
 >>>
@@ -276,10 +311,10 @@ Reference: Raiciu et al. How hard can it be? Designing and implementing a deploy
 
 - slight diffs in goodput improvement v.s. buffer size
 - Max goodput range: 2.2 - 2.9Mbps (DCE),  2.0 - 3.2Mbps (original)
-
+- **Successfully to replicate the trend between bufsize/goodput**
 
 <span>
-Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, CoNEXT 2013
+Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, *ACM CoNEXT 2013*
 </span>
 
 >>>
@@ -369,10 +404,12 @@ http://ns-3-dce.cloud.wide.ad.jp/jenkins/job/daily-net-next-sim/
 - Plenty of use cases
 
 
-<span> <small>
-- Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, CoNEXT 2013
-- Camara et al. DCE: Test the Real Code of Your Protocols and Applications over Simulated Networks, IEEE Communications Magazine, March 2014
-</span></small>
+<p><br>
+- *Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, CoNEXT 2013*
+- *Camara et al. DCE: Test the Real Code of Your Protocols and Applications over Simulated Networks, IEEE Communications Magazine, March 2014*
+- *Sekiya et al. DNSSEC simulator for realistic estimation of deployment impacts. IEICE ComEX(3):10, 2014.*
+
+
 
 ---
 
@@ -383,16 +420,24 @@ http://ns-3-dce.cloud.wide.ad.jp/jenkins/job/daily-net-next-sim/
 ## Network Stack in Userspace in a nutshell
 ### (What is NUSE ?)
 
-- Userspace network stack running on Linux (POSIX) platform
-- For Generic application (not only for network simulator)
-- Suitable with kernel bypass technologies (e.g., netmap, Intel DPDK)
+<div class="left" style="width: 50%">
+<img src="figs/nuse-overview.png" width="400">
+</div>
 
-- Benefit
- - network stack personality (like FUSE does)
- - full feature set of matured network stack
- - Multi-threading is easy
- - Rich development facilities
- - etc.
+<div class="right" style="width: 50%">
+<ul>
+<li> Userspace network stack running on Linux (POSIX) platform </li>
+<li> For generic framework (not only for network simulator) </li>
+<li> Suitable with kernel bypass technologies (e.g., netmap, Intel DPDK) </li>
+<li> Benefit </li>
+<ul>
+<li> network stack personality (like FUSE does) </li>
+<li>full feature set of matured network stack </li>
+<li>Multi-threading is easy </li>
+<li>Rich development facilities </li>
+</ul>
+</div>
+
 <!-- - Drawback -->
  
 
@@ -401,14 +446,14 @@ http://ns-3-dce.cloud.wide.ad.jp/jenkins/job/daily-net-next-sim/
 
 ## Problems
 
-- Slow evolution of network stack (lack of personality)
+- Slow evolution of network stack (**lack of personality**)
  - new protocols is hard to get deployed
  - performance improvement takes also long
  - e.g., Linux MPTCP, socket API sucks
 
 - Kernel space is a *holy* space
  - sometimes untouchable 
- - Can only big parties introduce a new protocol ? (QUIC)
+ - Can only big parties introduce a new protocol ? (e.g., QUIC)
 
 >>>
 
@@ -423,6 +468,10 @@ http://ns-3-dce.cloud.wide.ad.jp/jenkins/job/daily-net-next-sim/
 
 refs: https://fosdem.org/2015/interviews/2015-antti-kantee/
 
+Note:
+but basic question is.
+- why did network stack start from the kernel space in MULTICS era ?
+
 >>>
 
 ## but we don't want to reimplement from scratch
@@ -430,11 +479,11 @@ refs: https://fosdem.org/2015/interviews/2015-antti-kantee/
 - we (at least myself) don't want to **reimplement** the whole features
  - waste of time
  - breaks inter-operability
-- network stack is just a bunch of C code <!-- .element: class="fragment" data-fragment-index="1" -->
+- network stack is just a bunch of C code (in conventional OSes) <!-- .element: class="fragment" data-fragment-index="1" -->
 
 # 
 
-### **why not reuse it (rather than reimplement it) ?**  <!-- .element: class="fragment" data-fragment-index="2" -->
+**``why not reuse it (rather than reimplement it) ?``**  <!-- .element: class="fragment" data-fragment-index="2" -->
 
 >>>
 
@@ -443,7 +492,7 @@ refs: https://fosdem.org/2015/interviews/2015-antti-kantee/
 - mTCP [NSDI 14'], SandStorm [SIGCOMM 14'], MirageOS [ASPLOS 13']
  - reimplementing network stack from scratch isn't practical
 - OSv [USENIX ATC 14'], libuinet, 
- - porting is headache when you will track the latest code
+ - porting is a headache when you will track the latest code
 - Rump kernel [USENIX ATC 09']
  - more generic idea on NetBSD 
 
@@ -465,7 +514,7 @@ img src: https://www.flickr.com/photos/thomasclaveirole/305073153
 
 >>>
 
-## Architecture
+## NUSE Architecture
 
 <div class="left" style="width: 50%">
 <ul>
@@ -486,7 +535,7 @@ img src: https://www.flickr.com/photos/thomasclaveirole/305073153
 
 >>>
 
-## Execution
+## How it works
 
 ```
 % LD_PRELOAD=libnuse-linux.so ping www.google.com
@@ -497,8 +546,11 @@ call stack will be
 ping(8)
  socket(2)
   nuse_socket()
-   raw(7)
-    (via host NIC)
+   sock_sendmsg(lib-kernel)
+    ip_local_out(lib-kernel)
+     dev_queue_xmit(lib-kernel)
+      AF_PACKET(7)
+       (via host NIC)
 ```
 
 >>>
@@ -508,41 +560,39 @@ ping(8)
 >>>
 
 ## performance information (Host)
+Transmission over 10Gbps Ether link 
 
 <img src="figs/nuse-benchmark-topo-host.png" width="400">
-<img src="figs/nuse-benchmark-host.png" width="800">
+<img src="figs/nuse-benchmark-host.png" width="900">
 
-we're not so good right now :( <!-- .element: class="fragment" data-fragment-index="1" -->
+hmm..
 
 >>>
 
 ## performance information (L3 forwarding)
+IP forwarding over 10Gbps Ether link 
 
 <img src="figs/nuse-benchmark-topo-router.png" width="600">
-<img src="figs/nuse-benchmark-router.png" width="800">
+<img src="figs/nuse-benchmark-router.png" width="900">
 
-we're not good :( **(patches are welcome !!)** <!-- .element: class="fragment" data-fragment-index="1" -->
+``we're not good at all :-)`` <!-- .element: class="fragment" data-fragment-index="1" -->
 
 >>>
 
 ## Challenges
 
+- Investigate the overhead of *__indirections__*
 - Performance improvements based on previous studies (mTCP, Sandstorm)
+ - connection locality
+ - adaptive packet batching
+ - system call amortization
+
+
+Note:
+
 - To be sustainable over the decade
- - most of past projects are dissapeared due to many reasons
+ - most of past projects are disappeared due to many reasons
 
-
----
-
-
-## Future Directions
-
-- More generalized framework for userspace network stack
- - more applications, more host backend (bare metal, HV)
- - performed well (at least x1 speed of native kernel)
-- More generalized framework for any kernel subsystem on userspace
- - operating system on userspace (i.e., Library OS)
-- as rump kernel in NetBSD
 
 >>>
 
@@ -557,7 +607,7 @@ we're not good :( **(patches are welcome !!)** <!-- .element: class="fragment" d
 
 - proposed to Linux upstream, now improving the paches
  - featured Linux Weekly News (http://lwn.net/Articles/639333/)
- - Slide: http://www.slideshare.net/hajimetazaki/library-operating-system-for-linux-netdev01
+ - Slides: http://www.slideshare.net/hajimetazaki/library-operating-system-for-linux-netdev01
 
 ---
 
@@ -569,7 +619,7 @@ we're not good :( **(patches are welcome !!)** <!-- .element: class="fragment" d
  - DCE (experimental framework)
  - NUSE (network stack personality)
 
-- **Demonstrated userspace network stacks is flexible enough**
+- **Demonstrated userspace network stacks are useful enough**
 - Toward network stack more **democratic**
 - Toward the goal of **Freeform Internet**
 
@@ -666,3 +716,16 @@ Abstraction on more generic rump framework
 </p>
 
 
+>>>
+
+
+## Future Directions
+
+- More generalized framework for userspace network stack
+ - more applications, more host backend (bare metal, HV)
+ - performed well (at least x1 speed of native kernel)
+- More generalized framework for any kernel subsystem on userspace
+ - operating system on userspace (i.e., Library OS)
+
+Note:
+- as rump kernel in NetBSD
