@@ -21,7 +21,7 @@ Note:
 
 I would like to start with this figure
 
-This is my favorite picture, which was designed in 1950' by Paul
+This is my favorite picture, which was designed in 1950 by Paul
 Baran, and the Internet has been growing based on this idea, I
 believe.
 
@@ -80,13 +80,13 @@ Outline
 - History
  - microkernel
    UNIX => fat UNIX => slim kernel + rich servers => (performance issue) => fat UNIX
-   ~1980                     mid 1980'                 1990' - 2000' mid        2015
+   ~1980                     mid 1980                 1990 - 2000 mid        2015
 
    heart of u-kernel
    - multiple OSes (purpose)
    - multiple admin domains 
  - why now ?
-  - mtcp (NSDI'14), Sandstorm (SIGCOMM 14')
+  - mtcp (NSDI'14), Sandstorm (SIGCOMM '14)
   - 0) monolithic kernel
   - 1) micro-kernel with multiple (small) OSes (exokernel/libos)
   - 2) hypervisor with multiple monolithic kernel
@@ -95,7 +95,7 @@ Outline
  - JavaVM
  - unikernels (mirage, osv/seastar, clickos, rumpkernel,)
 - Solutions
- - DCE (CoNEXT 13')
+ - DCE (CoNEXT '13)
  - NUSE (linux netdev0.1)
    - LWN/Phoronix featured
 - Architecture
@@ -108,10 +108,10 @@ Outline
 
 ## three projects
 
-1. Floating ground architecture (IEEE/ACM ANCS 12')  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
+1. Floating ground architecture (IEEE/ACM ANCS '12)  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
  - tackled with current issue of non-flexible mobile network
  - solve with *virtual overlay* (called Floating Ground) in the middle
-2. **Direct code execution** (ACM CoNEXT 13')
+2. **Direct code execution** (ACM CoNEXT '13)
  - tackled with 3 issues of network protocol experiments
   - 1) lack of timing realism, 2) lack of functional realism, 3) lack of debuggability
  - solved with real kernel implementation with **indirections**
@@ -181,7 +181,7 @@ Note:
 ### Realtime emulation
 
 - Container Based Emulation
- - Mininet-HiFi [CoNEXT 12'] (LXC), Netkit [TridentCOM 10'] (UML)
+ - Mininet-HiFi [CoNEXT '12] (LXC), Netkit [TridentCOM '10] (UML)
  - provides lightweight virtualization
  - Timing realism is still restricted by hardware resources
  - No rich debugging support
@@ -191,12 +191,12 @@ Note:
 ## Related Work
 ### Virtual time emulation
 
-- Time Dilation [NSDI 06']
+- Time Dilation [NSDI '06]
  - Clock adjustment between different systems 
  - Constant time dilation factor
-- Slice Time [NSDI 12']
+- Slice Time [NSDI '12]
  - Uses synchronizer to adjust speeds between VMs and underlying emulated network
-- Time Travel VM (TTVM) [ATC 05']
+- Time Travel VM (TTVM) [ATC '05]
  - Support debugging with bw/fw navigation
 
 <div class="right" style="width: 20%">
@@ -300,7 +300,7 @@ img src: https://www.flickr.com/photos/thomasclaveirole/305073153
 3. configure an ns-3 scenario **with** the same software (Linux/iperf)
 
 <span>
-Reference: Raiciu et al. How hard can it be? Designing and implementing a deployable multipath tcp, *USENIX NSDI 12'*
+Reference: Raiciu et al. How hard can it be? Designing and implementing a deployable multipath tcp, *USENIX NSDI '12*
 </span>
 
 >>>
@@ -489,11 +489,11 @@ but basic question is.
 
 ## Related Work
 
-- mTCP [NSDI 14'], SandStorm [SIGCOMM 14'], MirageOS [ASPLOS 13']
+- mTCP [NSDI '14], SandStorm [SIGCOMM '14], MirageOS [ASPLOS '13]
  - reimplementing network stack from scratch isn't practical
-- OSv [USENIX ATC 14'], libuinet, 
+- OSv [USENIX ATC '14], libuinet, 
  - porting is a headache when you will track the latest code
-- Rump kernel [USENIX ATC 09']
+- Rump kernel [USENIX ATC '09]
  - more generic idea on NetBSD 
 
 >>>
@@ -599,7 +599,7 @@ Note:
 ## Linux LibOS project
 
 - Abstract two projects (DCE/NUSE) as an identical component
-- The idea is not brand-new technology (since 90's from MIT)
+- The idea is not brand-new technology (since '90's from MIT)
  - but recent revival (Drawbridge, OSv, Mirage, Rumpkernel)
 - ability to link **a single subsystem** to an application
  - only network stack at the present moment
