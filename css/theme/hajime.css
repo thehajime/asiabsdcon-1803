@@ -188,6 +188,15 @@ body {
 .reveal small * {
   vertical-align: top; }
 
+.reveal large {
+  display: inline-block;
+  font-size: 1.6em;
+  line-height: 1.2em;
+  vertical-align: top; }
+
+.reveal large * {
+  vertical-align: top; }
+
 /*********************************************
  * LINKS
  *********************************************/
