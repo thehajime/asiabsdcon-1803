@@ -33,17 +33,17 @@ IIJ Innovation Institute
 
 >>>
 
-## 様々な仮想化とその用途 (ネットワーク)
+### 様々な仮想化とその用途 (ネットワーク)
 
 - 手法
- - 仮想マシン (VM)
+ - 疑似 (仮想マシン)
  - 名前空間分離
  - カーネル迂回
- - unikernel
+<!-- - unikernel -->
 - 用途
  - 多重化、隔離環境
  - 機能追加への自由度
- - ボトルネック回避 (ユーザ空間ネットワークスタック)
+ - 性能改善
  - 軽量化、分化・専用用途
  - デバッグ・テスト、詳細・再現調査
  - 大規模ネットワーク実験
@@ -52,6 +52,7 @@ IIJ Innovation Institute
 Note:
 <!-- - エミュレーション (namespace/translation) -->
 
+<!--
 >>>
 
 ## 現在できる事
@@ -62,18 +63,35 @@ Note:
 - 専用ユーザ空間ネットワークスタック
  - 何かに特化する (ハードウェア、プロトコル、etc)
  - その分汎用なものを凌駕する性能 (pps, bps)
+->>
 
 >>>
 
 ## モチベーション (Why)
 
 - 新しい用途でも、実績のあるソフトウェアが利用したい
- - アプリケーション、ネットワークスタック、ファイルシステム
+ - ネットワークスタック (618K LoC, Linux)
+ - ファイルシステム (752K LoC, Linux)
+ - アプリケーション (a lot)
 - VM は重い (再現性向上 => 機動性低下)
  - 抽象化の場所 (プロセッサ、OS、システムコール、etc)
 - 仮想化技術から前進させて、変形させる
 
 <img src="figs/msr-vm-usage.png" width=40%>
+
+<small>
+Poll: "When you download and run software, how often do you use a virtual machine (to reduce security risks)?"
+
+- Jon Howell, Galen Hunt, David Molnar, and Donald E. Porter, Living Dangerously: A Survey of Software Download Practices, no. MSR-TR-2010-51, May 2010
+
+Note:
+US: us citizens (non-US is mostly Indian, and noisy due to all a answers)
+OS: OS researcher in MSR
+MS: non-OS employee in MSR
+
+>>>
+
+<img src="figs/msr-vm-usage.png" width=70%>
 
 Poll: "When you download and run software, how often do you use a virtual machine (to reduce security risks)?"
 
@@ -90,6 +108,9 @@ MS: non-OS employee in MSR
 <img src="figs/balance.png" width=100%>
 
 ## 性能と利便性の両立 ？
+
+- 性能を求めるには既存の資産(コード)は障壁になる
+- 既存の資産を生かすと、性能を犠牲にしなければならない
 
 Note:
 
@@ -114,8 +135,7 @@ img src: https://www.flickr.com/photos/thomasclaveirole/305073153
 
 ### モノリシックカーネルの再利用とは (What ?)
 
-- Anykernel: オペレーティングシステムの仮想化
-- NetBSD rump kernel に由来
+- Anykernel: NetBSD rump kernel に由来
 
 
 >We define an anykernel to be an organization of kernel code which allows the kernel's **unmodified** drivers to be **run in various configurations** such as application libraries and microkernel style servers, and also as part of a monolithic kernel.  -- Kantee 2012.
@@ -129,18 +149,37 @@ Note:
 すよ」という話と、「その仮想化技術にまだ課題がありますよ」という話を、
 Linux カーネルを題材としてお話。
 
----
+>>>
 
-## Anykernel の作り方 (一例)
+<div class="left" style="width: 40%">
+<br>
+<br>
+<img src="figs/anykernel-pre.png" width=100%>
+</div>
 
-- 機能のアウトソース
+
+<div class="right" style="width: 40%">
+<img src="figs/anykernel-post.png" width=100%><!-- .element: class="fragment" data-fragment-index="1" -->
+</div>
+
+>>>
+
+### モノリシックカーネルの再利用とは (cont'd)
+
+- 機能のアウトソース (環境依存コード)
  - 時計
  - メモリ
  - スケジュール
  - デバイス (NIC/ブロック) I/O
 
 - 様々な実装でこの仕組みを利用
- - SeaStar/OSv, mTCP, LKL/LibOS, rumpkernel, 
+ - SeaStar/OSv, mTCP, LKL/LibOS, rumpkernel
+
+- Anykernel として作るには、カーネル内に*透過的*にサブシステムを導入する必要があり
+ - 環境**非依存**コード
+ - CPU architecture として
+ - 独立したサブシステムとして
+
 
 >>>
 
@@ -148,18 +187,19 @@ Linux カーネルを題材としてお話。
 
 ## Who else ?
 
-- Full scratch
- - Mirage[ASPLOS 13']
+- Full scratch (ゼロから実装)
+ - Mirage [ASPLOS 2013]
+ - IncludeOS [CloudCom 2016]
  - SeaStar
- - IncludeOS[CloudCom 16']
- - mTCP[NSDI 14']
-- porting
- - OSv [USENIX 14']
+ - mTCP [NSDI 2014]
+- porting (既存 OS の移植)
+ - OSv [USENIX 2014]
  - libuinet
- - SandStorm[SIGCOMM 14']
+ - SandStorm [SIGCOMM 2014]
 - Anykernel
- - NetBSD rump[USENIX 09'], 
+ - NetBSD rump [USENIX 2009]
  - UML
+ - DrawBridge (?)
 
 Note:
 
@@ -179,11 +219,11 @@ Note:
 
 <large>
 
-|                    | 性能 | 多機能  | 保守|
+|                    | 性能 | 既存資産  | 最新版追従|
 | ------------------ |:---------:|: ----------:|:-------:|
 | full scratch |  **++**   |   **--**     | **+** | 
 | porting |  **+**       |   **+/-**     | **--** |
-| anykernel |  **<span style="color:red"><large>-</span>**         |   **++**     | **++** |
+| anykernel |  **-**         |   **++**     | **++** |
 
 <!-- | (virtualization) |  **-**         |   **++**     | **++** | -->
 
@@ -193,12 +233,12 @@ Note:
 
 ---
 
-# Linux Kernel Library (LKL)
+## Linux Kernel Library (LKL)
 
 
 >>>
 
-### Linux Kernel Library
+## Linux Kernel Library
 
 
 
@@ -228,11 +268,11 @@ Note:
 
 ## 歴史
 
- - rump: 2007
- - LKL: 2008
- - DCE/LibOS: 2010
- - LibOS/LKL reborn: 2015
-  - LibOS merged to LKL
+- rump: 2007 (NetBSD)
+- LKL: 2007 (Linux)
+- DCE/LibOS: 2008 (Linux/FreeBSD)
+- LibOS/LKL revival: 2015
+ - LibOS merged to LKL
 
 >>>
 
@@ -268,15 +308,15 @@ LibOS
 
 >>>
 
-## Internals
-<div class="left" style="width: 50%">
+## 内部構造
+<div class="left" style="width: 48%">
 <img src="figs/lkl-arch.png" width=100%>
 </div>
 
 
 <br>
-1. ホストバックエンド
-1. CPU 非依存アーキテクチャ arch/lkl
+1. ホストバックエンド (host_ops)
+1. CPU 非依存アーキテクチャ (arch/lkl)
 1. アプリケーションインターフェース
 
 
@@ -299,23 +339,26 @@ Note:
  - (rump ハイパーコール like)
 - Virtio によるデバイスインターフェース
  - ブロックデバイス <=> ディスクイメージ
- - ネットワーク <=> TAP, DPDK
+ - ネットワーク <=> TAP, DPDK, VDE
 
 >>>
 ## 2. CPU 非依存アーキテクチャ
 
-<div class="left" style="width: 40%">
+<div class="left" style="width: 35%">
 <img src="figs/lkl-arch-kernel.png" width=100%>
 </div>
 
 
 
-アーキテクチャ arch/lkl
+アーキテクチャ (arch/lkl)
 <br><br>
-- 他 CPU アーキテクチャと同等に扱える
-- 2600 LoC
-- スレッド構造体 (struct thread_info) 定義
-- irq, timer, syscall handler を実装
+- CPU アーキテクチャと同等に扱える
+ - 他コードへの影響をなくす
+- 2400 LoC
+ - スレッド構造体 (struct thread_info) 定義
+ - irq, timer, syscall handler を実装
+ - 下位層リソースへのアクセス(環境依存)は、
+   <br>host_opsにて表現
 
 >>>
 
@@ -325,6 +368,7 @@ Note:
 <img src="figs/lkl-arch-api.png" width=100%>
 </div>
 
+<br><br><br>
 - Case 1: use exposed API (LKL syscall)
 - Case 2: use host libc (LD_PRELOAD)
 - Case 3: extend (alternative) libc
@@ -392,6 +436,8 @@ Linux Multipath-TCP の実験可視化
 
 
 
+- ネットワーク状態の調査
+- ns-3 ネットワークシミュレータ
 - 多種のモデル
  - NIC
  - ノード移動
@@ -400,19 +446,21 @@ Linux Multipath-TCP の実験可視化
 - 単一プロセスにて複数ノード動作
  - dlmopen(3) にて実現 (シンボル退避)
  - システムコール再実装 (ノード振り分け)
-- ネットワーク状態の調査
- - **再現性 100 %** (実験・バグの再現)
+- **再現性 100 %** (実験・バグの再現)
 
 >>>
 ### Use Case 1: ネットワークシミュレータとの結合
 
 - カーネルのネットワークスタックテストツールとしても利用
+ - Regression テスト (を複雑なネットワークで)
  - 再現率 100 % (仮想クロックを利用)
  - コードカバレッジ測定 (シミュレータの疑似乱数利用)
  - Valgrind でデバッグ
 
-<img src="figs/jenkins.png" width="40%">
-<img src="figs/gcov.png" width="40%">
+<img src="figs/jenkins.png" width="30%">
+<img src="figs/gcov.png" width="30%">
+<p>
+<img src="figs/rocketfuel.png" width="20%">
 <img src="figs/valgrind.png" width="30%">
 
 Note:
@@ -439,12 +487,13 @@ LD_PRELOAD=liblkl-super-tcp++.so firefox
 ## Use Case 3: カーネルコードを再利用したアプリケーション開発
 - カーネルのコードを**移植なし**にユーザ空間でライブラリとして利用
 - LKL と外界 (ホストOS)の両方のシステムコールを利用可能
-- e.g., カーネル実装を利用したファイルシステムアクセス
-- 例： ext4 フォーマットのディスクイメージを root 権限なくアクセス
- 1. ディスクイメージ open(2)
+<p>
+- カーネル実装を利用したファイルシステムアクセス
+- 例： ext4 フォーマットのディスクイメージにアクセス
+ 1. ディスクイメージを開く (*CreateFile()*)
  1.  lkl_sys_mount()
  1.  lkl_sys_read()
- 1. ホストの別ファイルへ write(2)
+ 1. ホストの別ファイルへ書きこみ (*WriteFile()*)
 
 
 >>>
@@ -461,7 +510,31 @@ LD_PRELOAD=liblkl-super-tcp++.so firefox
 - Work in progress
 
 <div class="right" style="width: 40%">
+<img src="figs/CloudOSDiagram.png">
+
+<small>
+- http://www.linux.com/news/enterprise/cloud-computing/751156-are-cloud-operating-systems-the-next-big-thing-
+</small>
+</div>
+
+<!--
+<div class="right" style="width: 40%">
 <img src="figs/frankenlibc-stack.png" width=70%>
+</div>
+-->
+
+>>>
+
+## demos with linux kernel library
+
+<div class="left" style="width: 50%">
+<img src="figs/franken-linux-ping6.gif" width="840">
+Unikernel on Linux (ping6 command embedded kernel library)
+</div>
+
+<div class="right" style="width: 50%">
+<img src="figs/franken-qemu-arm-hello.gif" width="840">
+Unikernel on qemu-arm (hello world)
 </div>
 
 >>>
@@ -472,19 +545,19 @@ nginx (linked) LKL running on Linux
 
 >>>
 
-## 性能
+## ベンチマーク
 
 - 10Gbps Ethernet リンク (LibOS, 素の Linux)
 - 8コア CPU
 - ネットワークバックエンド (DPDK, netmap, rawソケットなど)
-- RTT (ping) と Throughput (iperf) 測定
+- RTT と Throughput 測定 (UDP 1024 byte パケット)
 
 <img src="figs/nuse-benchmark-topo-host.png" width=40%>
 <img src="figs/nuse-benchmark-host.png" width=70%>
 
 >>>
 
-## 性能 (cont'd)
+## ベンチマーク (cont'd)
 
 <img src="figs/nuse-benchmark-host.png" width=70%>
 
@@ -493,9 +566,55 @@ nginx (linked) LKL running on Linux
  - キャッシュミス
  - 多量の(ホスト)システムコールの数
 
+>>>
+
+## ボトルネック分析
+
+- ネットワークスタック部
+ - CPU コアローカルではないプロセス内通信
+ - 1パケット毎の処理多数 (バルク処理)
+ - システムコールのオーバヘッド (ホストバックエンド実装)
+- LKL 本体
+ - 迂回 (Indirection)の影響
+
+>>>
+
+<large>
+
+|                    | 性能 | 既存資産  | 最新版追従|
+| ------------------ |:---------:|: ----------:|:-------:|
+| full scratch |  **++**   |   **--**     | **+** | 
+| porting |  **+**       |   **+/-**     | **--** |
+| anykernel |  **<span style="color:red"><large>-</span>**         |   **++**     | **++** |
+
+>>>
+
+<large>
+
+|                    | 性能 | 既存資産  | 最新版追従|
+| ------------------ |:---------:|: ----------:|:-------:|
+| full scratch |  **++**   |   **--**     | **+** | 
+| porting |  **+**       |   **+/-**     | **--** |
+| anykernel |  **<span style="color:red"><large>+</span>**         |   **++**     | **++** |
+
+
 ---
 
 ## まとめ
+
+- カーネルのコードは再利用するものです!
+ - 20 年近くの資産を捨てるのは無駄
+ - (面倒な)移植なしに
+ - ライブラリとして (ユーザ空間プログラムに限らず)
+ - 必要な部分のみ利用可能
+<br>
+- オープンソースプロジェクトとして開発
+ - https://github.com/lkl/linux
+
+Note:
+
+**肩ひじ張らずに**使える	
+
 
 (モノリシック)カーネルのソースコードを変形
 - ライブラリ化
@@ -517,6 +636,7 @@ nginx (linked) LKL running on Linux
 - Rumpkernel (dissertation)
  - Kantee, Flexible Operating System Internals: The Design and Implementation of the Anykernel and Rump Kernels, Ph.D Thesis, 2012
 - Linux LibOS 一般
+ - Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, CoNEXT 2013
  - http://libos-nuse.github.io/ (LibOS in general)
  - https://lwn.net/Articles/637658/
 
