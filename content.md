@@ -1,4 +1,5 @@
-## Linux Kernel Library: Reusing Monolithic Kernel
+## Toward Freeform Internet
+#### an introduction to my research (hacking) activities
 
 <span>
 <br>
@@ -10,371 +11,158 @@
 IIJ Innovation Institute
 <br>
 
-2016/07
+2016/08
 
-AIST seminar vol.2
 </span>
 
 ---
 
-## LKL in a nutshell
 
+## Distributed System
 
-- Linux kernel library
- - a library of Linux
-- **Octavian Purdila (Intel)'s** <br> work (since 2007?)
-- Proposed on LKML (Nov. 2015)
- - https://lwn.net/Articles/662953/
- - 2809 LoC (as of Apr. 2016)
+  <img src="figs/baran-distributed.png" width="120%"/>
 
-<div class="right" style="width: 45%">
-<img src="figs/lkl-arch.png" width=100%>
-
-<br>
-<small>
-Purdila et al., LKL: The Linux kernel library, RoEduNet 2010.
-</small>
-</div>
-
->>>
-
-## LKL (cont'd)
-
-- hardware-independent architecture (arch/lkl)
-- provide an interface underlying environment
- - *outsource* dependencies
- - clock, memory allocation, scheduler
- - running on Windows, Linux, FreeBSD
-- simplify I/O operation of devices
- - virtio host implementation
- - could use the driver (of virtio) in Linux 
-
-<div class="right" style="width: 35%">
-<img src="figs/lkl-arch.png" width=100%>
-
-<br>
-<small>
-Purdila et al., LKL: The Linux kernel library, RoEduNet 2010.
-</small>
-</div>
-
->>>
-
-## Benefit
-
-- less ossification of new features
- - *operating system personality*
- - userspace library has less deployment cost
-- Well-matured code base
- - **(e.g.) Linux kernel running in userspace**
- - small kernel, a bunch of library
- - but in a different shape
-
-
->>>
-
-<!-- .slide: data-background="figs/cs-thomas.png" -->
-
-> Any problem in computer science can be solved with another level of __indirection__.
-
->(Wheeler and/or Lampson)
-
-
-
-<br /><small>
-img src: https://www.flickr.com/photos/thomasclaveirole/305073153
-</small>
-
->>>
-
-### What is reusing monolithic kernel ?
-
-- Anykernel: originally in NetBSD rump kernel 
-
-
->We define an anykernel to be an organization of kernel code which allows the kernel's **unmodified** drivers to be **run in various configurations** such as application libraries and microkernel style servers, and also as part of a monolithic kernel.  -- Kantee 2012.
-
-- Using (*unmodified*) high-quality code base of monolithic kernel
-- on different environment in different shape
-- by **gluing** additional stuffs 
-
+<span>
+P. Baran, On Distributed Communications Networks, IEEE Transactions on Communications Systems, 1964
+</span>
 
 Note:
 
-様々仮想化技術はあり、用途もあるが、「まだ別の仮想化技術が便利で必要で
-すよ」という話と、「その仮想化技術にまだ課題がありますよ」という話を、
-Linux カーネルを題材としてお話。
+I would like to start with this figure
 
->>>
+This is my favorite picture, which was designed in 1950 by Paul
+Baran, and the Internet has been growing based on this idea, I
+believe.
 
-<div class="left" style="width: 40%">
-<br>
-<br>
-<img src="figs/anykernel-pre.png" width=100%>
-</div>
-
-
-<div class="right" style="width: 40%">
-<img src="figs/anykernel-post-en.png" width=100%><!-- .element: class="fragment" data-fragment-index="1" -->
-</div>
-
->>>
-
-## (a bit of) History
-
-- rump: 2007 (NetBSD)
-- LKL: 2007 (Linux)
-- DCE/LibOS: 2008 (Linux/FreeBSD)
-- LibOS/LKL revival: 2015
- - LibOS merged to LKL
-
->>>
-
-<img src="figs/lwn-libos-150408.png" width=28%>
-<img src="figs/hnews-1503.png" width=28%><br>
-<img src="figs/phoronix-1503.png" width=28%>
-<img src="figs/mynavi-libos.png" width=28%>
-
-<small>
-http://news.mynavi.jp/news/2015/03/25/285/ <br>
-https://news.ycombinator.com/item?id=9259292 <br>
-http://www.phoronix.com/scan.php?page=news_item&px=Linux-Library-LibOS <br>
-http://lwn.net/Articles/639333/ <br>
-</small>
-
->>>
-
-## LKL v.s. LibOS
-
-<div class="left" style="width: 50%">
-<img src="figs/lkl-arch.png" width=100%>
-LKL
-</div>
-
-<div class="right" style="width: 50%">
-<img src="figs/libos-arch.png" width=75%>
-<br>
-LibOS
-</div>
-
->>>
-
-## LKL v.s. LibOS (cont'd)
-
-- LoC:
- - arch/lkl (LKL) < arch/lib (LibOS)
- - diff: the amount of stub code
-- commons
- - no modification to the original Linux code
- - description of kernel context (by POSIX thread)
- - outsourced resources (clock, memory, scheduler)
- - CPU independent architecture
-- diffs
- - LibOS: implemented with higher API (timer, irq, kthread) by pthread
- - LKL: implement IRQ, kthread, timer with pthread in lower layer
-
-Note:
-
-reimplementation of timer API is required for simulation's feature, time warp,
-
-
----
-
-## Implementation
-
->>>
-
-## Internals
-<div class="left" style="width: 48%">
-<img src="figs/lkl-arch.png" width=100%>
-</div>
-
-
-<br>
-1. Host backend (host_ops)
-1. CPU independent arch. (arch/lkl)
-1. Application interface
-
-
-Note:
- - bridge (real) userspace with library kernel
-
-(FIXME: add diagram)
+The key concept is 'distributed system', which 
+1) everybody can be replaced by everybody else, 
+2) everybody can do any ideas they wish
 
 
 >>>
 
-## 1. host backend
+## I'm dreaming about ...
 
-<div class="left" style="width: 55%">
-<img src="figs/lkl-arch-host.png" width=100%>
-</div>
-
-- environment *dependent* <br>part
- - unify an interface across <br> different platforms
- - (rump-hypercall like)
-- device interface with **Virtio**
- - block device <=> disk image
- - networking <=> TAP, <br> raw socket, DPDK, VDE
-
->>>
-## 2. CPU independent architecture
-
-<div class="left" style="width: 55%">
-<img src="figs/lkl-arch-kernel.png" width=100%>
-</div>
-
-
-
-architecture (arch/lkl)
-<br><br>
-- transparent architecture bind <br> (as CPU arch)
- - require no modification to  <br>the other
-- 2800 LoC
- - thread information (struct <br> thread_info)
- - irq, timer, syscall handler
- - access to underlying layer <br> by host_ops
-
->>>
-
-## 3. Application interface
-
-<div class="left" style="width: 55%">
-<img src="figs/lkl-arch-api.png" width=100%>
-</div>
-
-<br><br><br>
-1. use exposed API (LKL syscall)
-2. use host libc (LD_PRELOAD)
-3. extend (alternative) libc
-
->>>
-
-## API 1: use exposed API (LKL syscall)
-
-- call entry points of LKL kernel
- - *lkl_sys_open()*, *lkl_sys_socket()*
-- *almost* same as ordinal syscalls
- - return value, *errno* notification are different
-- can use LKL syscall *and* host syscall <br> simultaneously
- - read ext4 file by lkl_sys_read() => <br>write into host (Windows) by write()
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-syscall-1.png" width=100%>
-</div>
-
->>>
-## API 2: hijack host standard library
-
-- dynamically replace symbols <br> of host syscalls (of libc)
- - LD_PRELOAD
- - socket() => lkl_sys_socket()
-- can use host binary (executable) as-is
-- limitation of replaceable symbols
-- needs syscall translation on non-linux host
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-syscall-hijack.png" width=100%>
-</div>
-
->>>
-## API 3: extend (alternative) libc
-
-- **only** call LKL syscall with our own libc
-- also introduce as a virtual CPU architecture
-- a program can link this instead of host libc
- - can't access to (underlying) host resource <br>directly via this lkl syscall
-- as a patch for musl libc
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-syscall-musl.png" width=100%>
-</div>
-
->>>
-
-## Usecase (applications)
-
-- Use Case 1: instant kernel bypass
-- Use Case 2: programs reusing kernel code in userspace
-- Use Case 3: unikernel
-
->>>
-
-## Use Case 1: instant kernel bypass
-
-- syscall redirection by LD_PRELOAD
-- can use both LKL and host syscalls
-
-<br> <br>
-
-new feature without touching host kernel
-
-```
-LD_PRELOAD=liblkl-super-tcp++.so firefox
-```
-
->>>
-
-## Use Case 2: programs reusing kernel code in userspace
-- use kernel code without **porting**
- - mount a filesystem w/o root privilege
-- can use both LKL and host syscalls
-<p>
-- e.g., access to disk image of ext4 format on Windows
- 1. open disk image (*CreateFile()*)
- 1. Mount (*lkl_sys_mount()*)
- 1. read a file in the disk image (*lkl_sys_read()*)
- 1. write a file to windows side (*WriteFile()*)
-
-
->>>
-
-## Use Case 3: Unikernel
-
-- single-application contained LKL
- - python + LKL, nginx + LKL
-- only LKL syscalls available
- - musl libc extension
-- rump hypcall (frankenlibc)
- - running on non-OS environment
- - (on Xen Mini-OS via rumprun)
-- Work in progress
-
-<div class="right" style="width: 40%">
-<img src="figs/CloudOSDiagram.png">
-
-<small>
-- http://www.linux.com/news/enterprise/cloud-computing/751156-are-cloud-operating-systems-the-next-big-thing-
-</small>
-</div>
-
+- my ultimate goal
+ - Make the Internet more *democratic*
+ - **Freeform Internet**
 <!--
-<div class="right" style="width: 40%">
-<img src="figs/frankenlibc-stack.png" width=70%>
-</div>
+even though the reasons for those problems (deployment issue, architectural issue) are not technical issue, 
+but the others like political worries, stuck community, 
+technologies should be ready to answer the real problem which we faced.
 -->
 
->>>
+- by 'democratic' I meant
+ - *any entities (users, software, networks) CAN do anything as they wish IF there is (even small) a concensus*
 
-## demos with linux kernel library
-
-<div class="left" style="width: 50%">
-<img src="figs/franken-linux-ping6.gif" width="840">
-Unikernel on Linux (ping6 command embedded kernel library)
-</div>
-
-<div class="right" style="width: 50%">
-<img src="figs/franken-qemu-arm-hello.gif" width="840">
-Unikernel on qemu-arm (hello world)
-</div>
-
----
-
-## Kernel bypass/userspace networking
+Note:
+--- this is a lesson learnt from 3.11
 
 >>>
 
-## Network Stack
+  <img src="figs/baran-distributed.png" width="60%"/>
+  <img src="figs/baran-distributed-nhop.png" width="30%"/>
+
+
+>>>
+
+### 1. Floating Ground Architecture
+
+- Redesign of the mobile network architecture
+ - but not from scratch <br> (no clean-slate)
+ - redesign the shape of last 1-hop links
+- Contribution
+ - improve the handoff performance
+ - less mobility signaling
+
+<div class="right" style="width: 30%">
+  <img src="figs/floating-ground.png" width="100%"/>
+</div>
+
+<br>
+<br>
+<br>
+
+<span>
+*Tazaki et al. Floating ground architecture: overcoming the one-hop boundary of current mobile internet, ACM/IEEE ANCS 2012*
+</span>
+
+>>>
+
+### 2. Direct Code Execution
+
+- An extension to ns-3 network simulator
+- Benefits
+ - Implementation **realism**
+ - in **controlled topologies** <br> (including wireless environments)
+ - Model **availability**
+ - fully **reproducible**
+ - Debugging a whole network <br> within a single process
+
+<div class="right" style="width: 40%">
+  <img src="figs/dce-arch.png" />
+</div>
+
+<br>
+<br>
+
+<span>
+*Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, ACM CoNEXT 2013*
+</span>
+
+Note:
+- Limitations
+ - Not as scalable as pure simulation
+ - Tracing more limited
+ - Configuration different
+
+
+>>>
+
+<!-- .slide: class="two-floating-elements" -->
+## DCE in a nutshell
+#### a framework to use actual implementation on simulations
+
+> Lightweight virtualization of kernel and application processes, interconnected by simulated networks
+
+
+
+<video data-autoplay src="figs/ns-3-dce-mptcp-linux3.5.7-8subf.m4v"></video>
+
+- MPTCP v0.86 with ns-3-dce, 8 sub flows
+
+Note:
+ - https://www.youtube.com/watch?v=fN_nv7RdFm8
+
+- MPTCP over LTE (IPv4) and Wi-Fi (IPv6) 
+ - https://www.youtube.com/watch?v=rvF-yreZElQ
+
+
+- Benefits
+ - Implementation **realism**
+ - in **controlled topologies** (including wireless environments)
+ - Model **availability**
+ - fully **reproducible**
+ - Debugging a whole network within a single process
+- Limitations
+ - Not as scalable as pure simulation
+ - Tracing more limited
+ - Configuration different
+
+>>>
+
+### 3. Reusing Linux as a Library
+
+- monolithic kernel as a multi-purpose library
+- Benefit
+ - *operating system personality*
+ - userspace library has less deployment cost
+ - **bypass**ing kernel
+ - tiny operating system (unikernel)
+
+>>>
+
+## A view of Network Stack
 
 - Why in kernel space ?
  - the cost of packet was <br>expensive at the era ('70s)
@@ -432,83 +220,29 @@ Note:
 
 ## Motivations
 
-- Socket API sucks
+- **Socket API** sucks
  - StackMap, MegaPipe, uTCP, SandStorm, IX
  - New API: no benefit with existing applications
-- Network stack in kernel space sucks
+- Network stack in **kernel space** sucks
  - FastSocket, mTCP, lwip (SolarFlare?)
-- Compatibility is (also) important
+- **Compatibility** is (also) important
  - rumpkernel, libuinet, Arrakis, IX, SolarFlare
-- Existing programming model sucks
+- **Existing programming model** sucks
  - SeaStar
 
-
-Note:
-
-## Socket API issues
-- VFS overhead
-- non-batchable (**{send,recv}mmsg**)
-## kernel space is a source of ossification?
-## generalization costs a lot
-- rumpkernel + netmap 
-## seastar ?
-
 >>>
 
-## Techniques
+## Challenges
 
-- batching (syscall/NIC access)
- - Arrakis, IX, MegaPipe, mTCP, SandStorm, uTCP
-- Utilize feature-rich kernel stack
- - rumpkernel, fastsocket, StackMap
-- Porting to userspace stack
- - libuinet, SandStorm
-- Kernel bypass (userspace network stack)
- - mTCP, SandStorm, uTCP, rumpkernel, libuinet, lwip, SeaStar
-- bypass technique itself
- - netmap, PF_RING, raw socket, Intel DPDK
-- Connection locality (multi-core scalability)
- - SeaStar, MegaPipe, mTCP, fastsocket, .....
-
-Note:
-- Full scratch
- - lwip (Arrakis, IX, SolarFlare), mTCP, uTCP, SeaStar
+- (Obviously) Performance
+ - memory copy
+ - emulation overhead
+ - (lack of performance improvements) features
 
 
 >>>
-
-## Implementation
-
-- Full scratch
- - lwip (Arrakis, IX, SolarFlare?), mTCP, uTCP, SeaStar
-- Porting based
- - libuinet, SandStorm
-- New API
- - MegaPipe, StackMap
-- Anykernel
- - rumpkernel, (LKL)
-
->>>
-
-## What's still missing ?
-
-- some solves problems by **specialization**
- - avoiding generality tax
- - performance w/ specialization v.s. more features w/ generalization
- - e.g., less TCP stack features, new API breaks existing applications support.
-- **specialized** v.s. **generalized**
- - generalization often involves **indirection**
- - indirection usually introduces complexity (Wheeler/Lampson)
-- performant **and** generalized ?
-
-
----
-
-## Performance study
-
->>>
-
-## Conditions
+## Performance Study
+### Conditions
 
 - ThinkStation P310 x2
  - CPU: Intel Core i7-6700 CPU @ 3.40GHz (8 cores)
@@ -525,43 +259,6 @@ Note:
 
 >>>
 
-## Conditions (cont'd)
-
-- combinations
- - netperf (sendmmsg) + host stack (**native**)
- - \+ hijack library, native thread (**hijack**)
- - \+ frankenlibc/lkl, green thread (**lkl-musl**)
- - netperf (sendmmsg) + lkl extension + frankenlibc (**lkl-musl (skb pre alloc)**)
-- pinned a processor
- - using `taskset` command
-- disable all offload features (tso/gso/gro, rx/tx cksum)
-
->>>
-
-<img src="2016-07-12/tx/tcp-rr.png" width=80%>
-
-### TCP_RR (netperf)
-
->>>
-
-<img src="2016-07-12/tx/udp-stream.png" width=80%>
-
-### UDP_STREAM (netperf)
-
->>>
-
-<img src="2016-07-12/tx/udp-stream-pps.png" width=80%>
-
-### UDP_STREAM (pps, netperf)
-
->>>
-
-<img src="2016-07-12/tx/tcp-stream.png" width=80%>
-
-### TCP_STREAM (netperf)
-
->>>
-
 ## (ref.) LibOS results (as of Feb. 2015)
 
 <img src="figs/nuse-benchmark-host.png" width=100%>
@@ -572,28 +269,16 @@ Note:
 
 >>>
 
-## Observations (of benchmark)
+### Recent implementation (LKL), TCP_STREAM (netperf)
 
-- Native thread vs Green thread
- - better TCP_RR w/ native thread (pthread)
- - better TCP_STREAM/UDP_STREAM w/ green thread
- - ???
-- avoiding dynamic allocation contributes a lot
-- penalized over MTU-sized payload on host stack (?)
+<img src="2016-07-30/tx/tcp-stream.png" width=80%>
 
----
-
-## Summary
-
-- Morphing monolithic kernel into an Anykernel
-- Various use cases
- - Userspace network stack (kernel bypass)
- - Unikernel
-- Performance study in progress
+>>>
 
 
-https://github.com/lkl/linux
+## Everything is on the web
 
+- https://github.com/thehajime/
 
 >>>
 
@@ -608,153 +293,37 @@ https://github.com/lkl/linux
  - http://libos-nuse.github.io/ (LibOS in general)
  - https://lwn.net/Articles/637658/
 
-
 ---
 
-## Backups
+# Backup
 
 >>>
 
-### Use Case: Integration with ns-3 network simurator
+## Our approach: Kernel bypass
 
 <div class="left" style="width: 40%">
-<video data-autoplay src="figs/ns-3-dce-mptcp-linux3.5.7-8subf.m4v"></video>
-
-Visualize Linux Multipath-TCP experiments
-</div>
-
-
-
-- Investigation of network issues
-- ns-3 network simulator
-- plenty of models
- - NIC
- - node movement
- - traffic
- - timing
-- multiple node running inside a single process
- - by dlmopen(3) (avoid symbol conflicts)
- - syscall re-implementation (node distinction)
-- **100 % reproducible** (experiment, bugs)
-
->>>
-
-### Use Case: Integration with ns-3 network simurator
-
-- test tools for kernel network stack
- - Regression tests (in a complex scenario)
- - 100 % reproducible (virtual, deterministic clock)
- - code coverage measurements (with pseudo random variables of ns-3)
- - memory issue debug with Valgrind
-
-<img src="figs/jenkins.png" width="30%">
-<img src="figs/gcov.png" width="30%">
-<p>
-<img src="figs/rocketfuel.png" width="20%">
-<img src="figs/valgrind.png" width="30%">
-
-Note:
-note： not ported to LKL yet
-
-
-
->>>
-
-
-## Recent Updates
-
-
->>>
-
-## Updates (diff to lkl)
-
-- (musl) libc integration
-- rump hypercall interface
- - via frankenlibc tools (for POSIX environment)
- - via rumprun framework (for baremetall/xen/kvm environment)
-- more applications
- - netperf (signal handling, etc)
- - nginx
- - ghc (Haskell runtime)
-- performance study
-
->>>
-
-## libc integration
-
-- standard lib for LKL
- - all syscall direct to LKL
- - application can use LKL *transparently* <br>
-   no special modifications or hijack needed
-- based on musl libc
- - introduce new (sub) architecture **lkl**
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-syscall-musl.png" width=100%>
-</div>
-
->>>
-
-## rump hypercall interface
-
-- replacement of LKL host_ops
- - or yet-another new host environment (rump)
-- has two thread primitives
- - pthread-based (as LKL does)
- - ucontext-based (more efficient on non-MP)
-
-- can reduce
- - the effort of host_ops maintainance
- - complexity of tall abstraction turtle
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-rumphypcall.png" width=100%>
-</div>
-
->>>
-
-## rump hypcall (cont'd)
-
-- integration of
- - libc (musl for LKL, netbsd libc for rumpkernel)
- - rump hypcall (on linux, freebsd, netbsd, qemu-arm, spike)
- - host (platform) support code
-- frankenlibc
- - has two *namespaced* libc(s)
- - hyper call implementation can use libc
 <br>
-- provides
- - a **libc.a**
- - cross-build toolchains (rumprun-cc, etc)
+<br>
+<img src="figs/anykernel-pre.png" width=100%>
+</div>
+
+
+<div class="right" style="width: 40%">
+<img src="figs/anykernel-post-en.png" width=100%><!-- .element: class="fragment" data-fragment-index="1" -->
+</div>
 
 >>>
 
-## Usage
+## three projects
 
-- build
-
-```
-% ./configure CC=rumprun-cc ; make
-```
-
-- execution (with rexec launcher)
-
-```
-% rexec ./nginx disk-nginx.img tap:tap0 -- -c nginx.conf
-```
-
-rexec executable [disk image file] [NIC] -- [executable specific options]
-
->>>
-
-## Codes
-
-- https://github.com/libos-nuse/lkl-linux
-- https://github.com/libos-nuse/musl
-- https://github.com/libos-nuse/frankenlibc
-- https://github.com/libos-nuse/rumprun
-- https://github.com/libos-nuse/nginx
-- https://github.com/libos-nuse/ghc
-
-
-
+1. **Floating ground architecture** (IEEE/ACM ANCS '12)
+ - tackled with current issue of non-flexible mobile network
+ - solve with *virtual overlay* (called Floating Ground) in the middle
+2. **Direct code execution** (ACM CoNEXT '13)
+ - tackled with 3 issues of network protocol experiments
+  - 1) lack of timing realism, 2) lack of functional realism, 3) lack of debuggability
+ - run real kernel implementation in a userspace process with **indirections**
+3. **Network stack in userspace/Linux LibOS** (ongling)
+ - Problem: no network stack personality on a system
+ - solved with another indirection by dynamically translating an application code
+ - end-to-end principle for network stack (toward E2E principle for OSes)
