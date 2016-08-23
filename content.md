@@ -1,5 +1,4 @@
-## Toward Freeform Internet
-#### an introduction to my research (hacking) activities
+## Performance related flustrations
 
 <span>
 <br>
@@ -7,7 +6,7 @@
 <br>
 <br>
 
-### Hajime Tazaki 
+#### Hajime Tazaki 
 IIJ Innovation Institute
 <br>
 
@@ -17,313 +16,259 @@ IIJ Innovation Institute
 
 ---
 
+### (This talk is inspired by a blog "Programming Myth")
 
-## Distributed System
+<img src="figs/harmful-goto-blog-en.png" width=45%>
+<img src="figs/harmful-goto-jp.png" width=45%>
 
-  <img src="figs/baran-distributed.png" width="120%"/>
-
-<span>
-P. Baran, On Distributed Communications Networks, IEEE Transactions on Communications Systems, 1964
-</span>
-
-Note:
-
-I would like to start with this figure
-
-This is my favorite picture, which was designed in 1950 by Paul
-Baran, and the Internet has been growing based on this idea, I
-believe.
-
-The key concept is 'distributed system', which 
-1) everybody can be replaced by everybody else, 
-2) everybody can do any ideas they wish
-
+http://videlalvaro.github.io/2015/02/programming-myths.html
+http://postd.cc/programming-myths/
 
 >>>
 
-## I'm dreaming about ...
 
-- my ultimate goal
- - Make the Internet more *democratic*
- - **Freeform Internet**
-<!--
-even though the reasons for those problems (deployment issue, architectural issue) are not technical issue, 
-but the others like political worries, stuck community, 
-technologies should be ready to answer the real problem which we faced.
--->
+## What I'm doing
 
-- by 'democratic' I meant
- - *any entities (users, software, networks) CAN do anything as they wish IF there is (even small) a concensus*
+- Operating system *re-construction*
+ - for a selfishness (personality,specialization)
+ - but respect the past dozen effort <br>
+   (reusing Linux kernel)
 
-Note:
---- this is a lesson learnt from 3.11
+- *Precludes any ossification in software (i.e., Internet)*
 
->>>
-
-  <img src="figs/baran-distributed.png" width="60%"/>
-  <img src="figs/baran-distributed-nhop.png" width="30%"/>
+- e.g.
+ - Userspace network stack
+ - Lightweight guest operating system
+ - Reproducible network experiment (simulation)
 
 
->>>
-
-### 1. Floating Ground Architecture
-
-- Redesign of the mobile network architecture
- - but not from scratch <br> (no clean-slate)
- - redesign the shape of last 1-hop links
-- Contribution
- - improve the handoff performance
- - less mobility signaling
-
-<div class="right" style="width: 30%">
-  <img src="figs/floating-ground.png" width="100%"/>
+<div class="right" style="width: 15%">
+<img src="figs/nuse-overview.png" width=100%>
+<img src="figs/CloudOSDiagram.png" width=100%>
+<video data-autoplay src="figs/ns-3-dce-mptcp-linux3.5.7-8subf.m4v" width=100%></video>
 </div>
 
-<br>
-<br>
-<br>
+Note:
+
+To apply today's agenda (keywords) to my research topic, I rethink
+- what i'm doing
+- how others were doing
+- how we should go
+
+>>>
+
+## High Performance == Speed ?
+
+>>>
+
+
+<img src="figs/speed-matter-6wind-2.png" width=70%>
+
+
+<small>
+http://www.slideshare.net/6WIND/6wind-speed-matters-the-challenge-2014-contest-winners
+</small>
+
+>>>
+
+
+## Speed as a strong metric
+
+<img src="figs/ix-osdi14-perf.png" width=70%>
+
+- e.g. outperforms 180x 
+- e.g. reduce the overhead by 30%
 
 <span>
-*Tazaki et al. Floating ground architecture: overcoming the one-hop boundary of current mobile internet, ACM/IEEE ANCS 2012*
+Belay et al., IX: A Protected Dataplane Operaing System for High Throughput and Low Latency, USENIX OSDI '14
 </span>
 
 >>>
 
-### 2. Direct Code Execution
+## A number describes a system
 
-- An extension to ns-3 network simulator
-- Benefits
- - Implementation **realism**
- - in **controlled topologies** <br> (including wireless environments)
- - Model **availability**
- - fully **reproducible**
- - Debugging a whole network <br> within a single process
+- an important way to evaluate (good or bad)
+- a number never tell lies
 
-<div class="right" style="width: 40%">
-  <img src="figs/dce-arch.png" />
-</div>
+> Generic advice on abstract writing for systems papers:
+>
+> (snip)
+> 1. Define the problem you're solving
+> 2. Give the key idea for how you solved it
+> 3. Describe how you demonstrate the success of your solution
+> 4. Give key results, preferably **numerically**
+> 5. Describe how this impacts the world/industry/whatever (big picture)
 
+
+
+<small>
+*Abstracts for Systems Papers* (blog: rdv live from Tokyo)
 <br>
-<br>
+ http://rdvlivefromtokyo.blogspot.jp/2011/04/abstracts-for-systems-papers.html
+</small>
 
-<span>
-*Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, ACM CoNEXT 2013*
-</span>
+>>>
+
+## But is number only the way ?
+- numbers age quite fast
+- improving numbers **often** sacrifice features/functions
+
+<img src="figs/balance.png" width=60%>
 
 Note:
-- Limitations
- - Not as scalable as pure simulation
- - Tracing more limited
- - Configuration different
-
+- Today's 8Gbps is not fast result on 10 years later
 
 >>>
 
-<!-- .slide: class="two-floating-elements" -->
-## DCE in a nutshell
-#### a framework to use actual implementation on simulations
-
-> Lightweight virtualization of kernel and application processes, interconnected by simulated networks
-
-
-
-<video data-autoplay src="figs/ns-3-dce-mptcp-linux3.5.7-8subf.m4v"></video>
-
-- MPTCP v0.86 with ns-3-dce, 8 sub flows
-
-Note:
- - https://www.youtube.com/watch?v=fN_nv7RdFm8
-
-- MPTCP over LTE (IPv4) and Wi-Fi (IPv6) 
- - https://www.youtube.com/watch?v=rvF-yreZElQ
-
-
-- Benefits
- - Implementation **realism**
- - in **controlled topologies** (including wireless environments)
- - Model **availability**
- - fully **reproducible**
- - Debugging a whole network within a single process
-- Limitations
- - Not as scalable as pure simulation
- - Tracing more limited
- - Configuration different
+<img src="figs/dict-performance.png" width=90%>
 
 >>>
 
-### 3. Reusing Linux as a Library
-
-- monolithic kernel as a multi-purpose library
-- Benefit
- - *operating system personality*
- - userspace library has less deployment cost
- - **bypass**ing kernel
- - tiny operating system (unikernel)
+## Any accomplishment !
 
 >>>
 
-## A view of Network Stack
+## Stuffs about extensive performance improvements
 
-- Why in kernel space ?
- - the cost of packet was <br>expensive at the era ('70s)
- - now much cheaper
+>>>
 
-- Getting fat (matured) <br>after decades
- - code path is longer <br> (and slower)
- - hard to add new features
- - faced unknown issues
+## Example: kernel bypass technologies
+- bypassing for *selfishness* (personality)
+- Intel DPDK, netmap, PacketShader, ...
+- basic IPv4 stack (ARP, IPv4 reassembles, ..)
+- very limited usage for the production use
+ - packet drop (DDoS prevention)
+ - traffic generator
+- no general purpose use<!-- .element: class="fragment" data-fragment-index="1" -->
+ - (*toy*)<!-- .element: class="fragment" data-fragment-index="1" -->
 
 <div class="right" style="width: 50%">
-<img src="figs/fat-kernel.png">
+<img src="figs/bypass-image.jpg" width=100%>
 <small>
-img src: http://www.makelinux.net/kernel_map/
+https://blog.cloudflare.com/kernel-bypass/ <br>
+https://www.flickr.com/photos/londonmatt/11421393074/
 </small>
-</img>
 </div>
+
 
 >>>
 
-## Alternate network stacks
+## Example: Clean-slate approach
+- design/implement from scratch
+- often good to start to concentrate on *new ideas*
+- Example
+ - mTCP [NSDI '14], excellent TCP throughput (**25x Linux**)
+ - no offload, recent extensions (TFO, Crypt, CC algorithm, ...)
+- toy<!-- .element: class="fragment" data-fragment-index="1" -->
 
-- lwip (2002~)
-- Arrakis [OSDI '14]
-- IX [OSDI '14]
-- MegaPipe [OSDI '12]
-- mTCP [NSDI '14]
-- SandStorm [SIGCOMM '14]
-- uTCP [CCR '14]
-- rumpkernel [ATC '09]
-- FastSocket [ASPLOS '16]
-- SolarFlare (2007~?)
-- StackMap [ATC '16]
-- libuinet (2013~)
-- SeaStar (2014~)
-- Snabb Switch (2012~)
+<img src="figs/clean-slate.jpg" width=40%>
+<img src="figs/mtcp-results.jpg" width=35%>
+<div class="left" style="width: 50%">
+<small>
+http://www.braveandhappy.com/2015/10/a-clean-slate.html
+</small>
+</div>
 
 Note:
 
-218	lwip
-85	Arrakis
-78	IX
-63	MegaPipe
-44	mTCP
-32	SandStorm
-17	uTCP
-13	rumpkernel
-2	FastSocket
-1	SolarFlare
-1	StackMap
-1	libuinet
-1	SeaStar
+if you started something based on the current situation, your idea will be restricted on the current limitations
+
+so starting from scratch, as known as clean-slate approach, will give you a freedom to imagine a great idea.
 
 >>>
 
-## Motivations
+## How Others Say
 
-- **Socket API** sucks
- - StackMap, MegaPipe, uTCP, SandStorm, IX
- - New API: no benefit with existing applications
-- Network stack in **kernel space** sucks
- - FastSocket, mTCP, lwip (SolarFlare?)
-- **Compatibility** is (also) important
- - rumpkernel, libuinet, Arrakis, IX, SolarFlare
-- **Existing programming model** sucks
- - SeaStar
+- MegaPipe [OSDI '12]
+ - *outperforms baseline Linux .. **582%** (for short connections).*
+ - New API for applications (no existing applications benefit)<!-- .element: class="fragment" data-fragment-index="1" -->
+- mTCP [NSDI '14]
+ - *improves the performance ... **by a factor of 25** compared to the latest Linux TCP stack*
+ - implement with very limited TCP extensions<!-- .element: class="fragment" data-fragment-index="1" -->
+- SandStorm [SIGCOMM '14]
+ - *our approach with the FreeBSD and Linux stacks ..., **demonstrating 2-10x** improvements*
+ - specialized (no existing applications benefit)<!-- .element: class="fragment" data-fragment-index="1" -->
+- Arrakis [OSDI '14]
+ - *improvements of **2-5x in latency and 9x in throughput** .. to a well-tuned Linux implementation.*
+ - utilize simplified TCP/IP stack (lwip) (loose feature-rich extensions)<!-- .element: class="fragment" data-fragment-index="1" -->
+- IX [OSDI '14]
+ - *improves the throughput ... **by up to 3.6x** and reduces tail latency **by more than 2x***
+ - utilize simplified TCP/IP stack (lwip) (loose feature-rich extensions)<!-- .element: class="fragment" data-fragment-index="1" -->
 
->>>
-
-## Challenges
-
-- (Obviously) Performance
- - memory copy
- - emulation overhead
- - (lack of performance improvements) features
-
-
->>>
-## Performance Study
-### Conditions
-
-- ThinkStation P310 x2
- - CPU: Intel Core i7-6700 CPU @ 3.40GHz (8 cores)
- - Memory: 32GB
- - NIC: X540-T2
-- Linux 4.4.6-301 (x86_64) on Fedora 23
- - Linux bridge (X540 + tap/raw socket)
- - *no DPDK*... can't with hijack, etc
-- netperf (git ~v2.7.0)
- - netserver (native)
- - netperf (varied)
-
-<img src="figs/bench-topo.png" width=50%>
+Note:
+- netmap [ATC '12]
+ - *a single core ... can send or receive 14.88 Mpps (**the peak packet rate** on 10 Gbit/s links).*
 
 >>>
 
-## (ref.) LibOS results (as of Feb. 2015)
-
-<img src="figs/nuse-benchmark-host.png" width=100%>
-
-- 1024 bytes UDP, own-crafted tool
-
-- throughput: <10% of Linux native
+Sigh
 
 >>>
 
-### Recent implementation (LKL), TCP_STREAM (netperf)
-
-<img src="2016-07-30/tx/tcp-stream.png" width=80%>
-
->>>
+## A good system research (paper) should be
+ (by Tazaki 2016.)
 
 
-## Everything is on the web
+- Address real problem(s), **without (functionality) degradation**
+- **With exhaustive evaluations**
+ - temptation (numbers are attractive)
+ - be honest (as usual)
+ - respect prior work (as usual)
 
-- https://github.com/thehajime/
-
->>>
-
-## Reference
-- Linux Kernel Library
- - Purdila et al., LKL: The Linux kernel library, RoEduNet 2010.
- - https://github.com/lkl/linux
-- Rumpkernel (dissertation)
- - Kantee, Flexible Operating System Internals: The Design and Implementation of the Anykernel and Rump Kernels, Ph.D Thesis, 2012
-- Linux LibOS in general
- - Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, CoNEXT 2013
- - http://libos-nuse.github.io/ (LibOS in general)
- - https://lwn.net/Articles/637658/
-
----
-
-# Backup
-
->>>
-
-## Our approach: Kernel bypass
-
-<div class="left" style="width: 40%">
 <br>
-<br>
-<img src="figs/anykernel-pre.png" width=100%>
-</div>
+### No Silver Bullet (Frederick Brooks Jr., 1986)<!-- .element: class="fragment" data-fragment-index="1" -->
+
+Note:
+
+revealing the strong point is not an evaluation
 
 
-<div class="right" style="width: 40%">
-<img src="figs/anykernel-post-en.png" width=100%><!-- .element: class="fragment" data-fragment-index="1" -->
-</div>
 
 >>>
 
-## three projects
+## Summary
 
-1. **Floating ground architecture** (IEEE/ACM ANCS '12)
- - tackled with current issue of non-flexible mobile network
- - solve with *virtual overlay* (called Floating Ground) in the middle
-2. **Direct code execution** (ACM CoNEXT '13)
- - tackled with 3 issues of network protocol experiments
-  - 1) lack of timing realism, 2) lack of functional realism, 3) lack of debuggability
- - run real kernel implementation in a userspace process with **indirections**
-3. **Network stack in userspace/Linux LibOS** (ongling)
- - Problem: no network stack personality on a system
- - solved with another indirection by dynamically translating an application code
- - end-to-end principle for network stack (toward E2E principle for OSes)
+- Let the performance be a general-class metric
+- *discover new thing through past studies*
+ - respect prior work
+ - and think different(ly)
+
+>>>
+
+### References
+
+- Papers
+ - [mTCP'14] Jeong et al., mTCP: a Highly Scalable User-level TCP Stack for Multicore Systems, NSDI'14
+ - [IX'14] Belay et al., IX: A Protected Dataplane Operating System for High Throughput and Low Latency, OSDI'14
+ - [Arrakis'14] Peter et al., Arrakis: The Operating System is the Control Plane, OSDI'14
+ - [MegaPipe'12] Han et al., MegaPipe: A New Programming Interface for Scalable Network I/O, OSDI'14
+ - [SandStorm'14] Marinos et al., Network stack specialization for performance, SIGCOMM '14
+ - [PacketShader'10] Han et al., PacketShader: a GPU-accelerated Software Router, ACM SIGCOMM '10
+
+>>>
+
+### References (cont'd)
+
+- Blog
+ - http://videlalvaro.github.io/2015/02/programming-myths.html
+ - http://postd.cc/programming-myths/
+ - http://rdvlivefromtokyo.blogspot.jp/2011/04/abstracts-for-systems-papers.html (Abstracts for Systems Papers)
+- Quotes
+ - Frederick P. Brooks, Jr., "No Silver Bullet - Essence and Accidents of Software Engineering", IFIP 10th World Computing
+
+Note:
+ - Premature optimization
+ - premature optimization is the root of all evil (knuth)
+ - Dijkstra's Goto
+
+>>>
+
+## Random thoughts
+
+- Performance (Optimization) vs Functionality/Flexibility
+ - trade off
+ - Performance gain => Functional degradation
+ - Functional gain => Performance degradation
+
+- Generalization Tax
+- Specialization Tax
