@@ -1,112 +1,202 @@
-
-<!-- .slide: data-background="figs/sticker.jpg" -->
-
->>>
-
-## For Speakers
-
-- Slides
- - Send the latest slides if you have updates (or want to hide something)
-
-- For Talk speakers
- - **Send your paper**
-
-- Dates
- - **November 1, 2016 Slides release**
- - **December 1, 2016 Paper release**
-
->>>
-
-## Video recording
-
-- On Youtube channel (netdevconf.org)
-
-- let us know if you don't wish to publish
-
->>>
-
-## stats
-
-- 130 registrations
- - 22 countries
- - 52 organizations
-- 33 sessions (Keynotes, Workshops, BoFs, Talks)
-
-
-Note:
-
-## stats
-
-<img src="figs/tshirt-size.png" width=80%>
-
->>>
-
-## Teams
-
-- **Technical Committee**
- - David S. Miller
- - Jamal Hadi Salim
- - Johannes Berg
- - Jesper Dangaard Brouer
- - Pablo Neira Ayuso
- - Tom Herbert
-
-
-- **Organization Committee**
- - Hajime Tazaki
- - Yuji Sekiya
- - Michio Honda
- - Ryo Nakamura
- - Jamal Hadi Salim
- - Pablo Neira Ayuso
- - Scott Macdonald
- - Kyoko Okuyama
- - Kana Ohta
-
-
-- **Student Volunteers**
- - Shoya Taguchi
- - Yuta Tokusashi
- - Minoru Kanatsu
- - Hiroki Sakamoto
- - Nanako Momiyama
-
+## インターネットコンファレンス 2016 まとめ
 
 
 >>>
 
-## Special Thanks !
+## (一言で)
 
-<img src="figs/netdev12-sponsors.png" width=120%>
+- 
 
-- **Platinum**
- - Verizon, Facebook, Cumulus Networks
-- **Gold**
- - Mojatatu Networks, VMWare, Google, NTT, LinkedIn, Cisco
-- **Silver**
- - NetApp, IIJ, Netronome, SolarFlare, Mellanox, Sophos, RedHat, Intel
-- **Bronze**
- - Zen Load Balancer
-- **Media sponsor**
- - LWN.net
+>>>
+
+## 数字
+
+- 論文投稿 4 件、採択 3 件
+- ポスター発表数 8 件
+- 招待講演 2 件
+ - Luigi Rizzo (Universita di Pisa)
+ - Joao Luis Sobrinho (University of Lisbon)
+
+- 参加者数
+
+|||
+|--|--|
+|一般| 8|
+|会員| 32(当日1)|
+|学生|  37 (当日4)|
+|遠隔参加| 5|
+|スポンサー|16|
+|計|98|
+
+>>>
+
+## スポンサー
+
+- 一般(50万)
+ - レッドハット株式会社
+ - さくらインターネット株式会社
+ - ソフトイーサ株式会社
+ - 株式会社 東陽テクニカ
+ - WIDE
+ - 富士通
+ - NTT コミュニケーションズ
+- プレミアム (150万)
+ - NTT コミュニケーションズ
+
+>>>
+
+## 会計 (収入)
+
+|||
+|--|--|
+|スポンサー料 (一般) |3,500,000|
+|スポンサー料 (プレミアム)|1,620,000|
+|参加費|1,055,000|
+|その他|100|
+|収入計|6,175,100|
+
+>>>
+## 会計(支出)
+
+|||
+|--|--|
+|会場費|3,747,952|
+|事務局外注|1,080,000|
+|招待講演|386,787|
+|学生旅費支援|159,035|
+|その他運営費|66864|
+|製本代(予定)|129,016|
+|支出計|5,569,654|
+
+<b>単年度収支 \605,446 </b>
+
+>>>
+<!-- .slide: class="two-floating-elements" -->
+
+## 反省点一覧
+
+<div class="left" style="width: 45%">
+Good
+<p data-markdown>- 手厚い査読 </p>
+<p>- 企業との連携 </p>
+<p>- 発表時間が潤沢 </p>
+</div>
+
+Bad
+- ずさんな運営 (スケジュール、分担不明瞭)
+- 論文投稿数の激減
+- TPC の Diversity なし
+- 評判が下がった (採択率、採択論文著者の偏り)
+
+Other
+- ホテル会場・懇親会への費用
+- 運営事務局の委託
+- 旅費支援
+- 学生料金の設置
+
+>>>
+## Good: 手厚い査読
+
+- 1 論文あたり 7 or 8 査読
+- reject された著者からの手厚いコメントへの評価
+
+課題
+- 投稿数が増えた時に対応できるか？
+
+>>>
+## Good:企業との連携
+
+- 懇親会での交流
+- 質疑応答、オフラインでの議論 (からの、協業など)
+- 学術コミュニティを欲している企業もあり (人材発掘、営業機会)
+
+>>>
+## Good:発表時間が潤沢
+
+- 発表者が少なかった事の副産物
+- 質疑に大量に時間が割けた
+- 招待講演者も
+
+>>>
+
+## Bad: ずさんな運営 (スケジュール、分担不明瞭)
+
+- 今年(2016)に新しくやった運営などルーチンが見えにくい
+- 中身 (査読レベルを上げる)と、運営 (会場を豪華にする)、という 2 本立ての軸がしんどかったのでは？
+- スケジュールが遅れ、早い段階でアナウンスすればよかった
+ - CFP 発行を主催確定を待ったため
+- 実行委員長不在 (8月〜)
+- 運営体制が弱かった、音頭取り、運営委員長など仕事の交代の仕組みとか
+- 実行委員会の会議参加率が低い
+
+改善案
+- 実行委員も(継続ではなく)新規に募集をかけた方がよかったのかも。
+- 役割分担を明確に (xx係、xx Chair と名前をつけるなど)
+
+>>>
+## Bad:論文投稿数の激減
+
+- CFP が遅い
+- 投稿条件(評価 3 ページ)がきつい
+- プログラム委員内からの投稿は、委員長以外なし
+
+
+>>>
+## Bad:TPC の Diversity なし
+
+- プログラム委員長の所属(WIDE)に偏った
+- 結果論文投稿が少なかった
+
+改善策
+- WIDE 以外からも
+- 日本人以外からも (今年は Rod/Romain)
+
+>>>
+## Bad: 評判が下がった
+
+- 採択率 75%
+- 採択論文著者の偏り (プログラム委員長からのみ)
+
 
 
 >>>
 
-## Feedback
+## 来年度へ向け
 
-Feel free to take microphones
-
+- ゆるやかな改善
+- 2016 良かった所は継続
 
 >>>
 
-<img src="figs/netdev12-logo-ver3.png" width=150%>
+## ゴール設定
 
-## Netdev 1.2 Tokyo
+- 今年(IC2016)
+ - 産業界と学術界の連結 (その為の論文の質向上)
+- 来年(IC2017)
+ - まずは学術界の質向上 (コンテンツありき)
 
-<img src="figs/IMG_0861.jpg" width=20%>
-<img src="figs/IMG_0862.jpg" width=20%>
-<img src="figs/IMG_0863.jpg" width=20%>
+>>>
 
+## 運営案
 
+- 組織再編
+ - 役割明確化 (プログラム委員と実行委員はごっちゃにしない)
+- ゴール
+ - 論文質向上策継続
+ - ホテルはやめる
+ - スポンサーは必要な額のみ (数、単価を下げる)
 
+>>>
+
+## 委員
+
+- Organization Chair
+- Program Committee Chair
+- Financial Chair
+- Proceedings Chair
+- Publicity Chair
+- Local Arrangement Chair
+- Web Chair
+- Paper Submission Chair
+- Travel Grant Chair
+- Poster Chair
