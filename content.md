@@ -1,4 +1,4 @@
-## Linux Kernel Library: Reusing Monolithic Kernel
+# 2016 Research Review
 
 <span>
 <br>
@@ -10,548 +10,70 @@
 IIJ Innovation Institute
 <br>
 
-2016/12
-
-ネットワークソフトウェアの設計と実装原理研究会
+2017/1, IIJlab camp Winter '17
 </span>
 
 ---
 
-## Intro.
+## Outlook (of what I'm doing)
 
-- 2000-2007 PFU
- - COPS s/v
- - v4 routing (zebra/quagga)
-- 2007-2011 SFC
- - MANEMO
-- 2011-2013 NICT
- - ns-3 + Linux
-- 2013-2016 UTokyo
- - LibOS/LKL
-- 2016-     IIJ-II
- - LibOS/LKL
+- Operating system *re-construction*
+ - for a selfishness (personality,specialization)
+ - but respect the past dozen effort <br>
+   (reusing Linux kernel)
 
----
+- *Precludes any ossification in software (i.e., Internet)*
 
-## LKL in a nutshell
+- e.g.
+ - Userspace network stack
+ - Lightweight guest operating system (e.g., unikernel)
+ - Reproducible network experiment (simulation)
 
 
-- Linux kernel library
- - a library of Linux
-- **Octavian Purdila (Intel)'s** <br> work (since 2007?)
-- Proposed on LKML (Nov. 2015)
- - https://lwn.net/Articles/662953/
- - 2809 LoC (as of Apr. 2016)
+<div class="right" style="width: 15%">
+<img src="figs/nuse-overview.png" width=100%>
+<img src="figs/CloudOSDiagram.png" width=100%>
+<video data-autoplay src="figs/ns-3-dce-mptcp-linux3.5.7-8subf.m4v" width=100%></video>
+</div>
 
-<div class="right" style="width: 35%">
-<img src="figs/lkl-arch.png" width=100%>
+>>>
+
+## 2016 Plan
+
+1. Performance investigation on userspace network stack
+1. Show the PoC of unikernel using LKL
+1. Upstream LKL code to Linux mainline
 
 <br>
-<small>
-Purdila et al., LKL: The Linux kernel library, RoEduNet 2010.
-</small>
-</div>
-
->>>
-
-## LKL (cont'd)
-
-- hardware-independent <br> architecture (arch/lkl)
-- provide an interface underlying <br>environment
- - *outsource* dependencies
- - clock, memory allocation, <br>scheduler
- - running on Windows, Linux, <br>FreeBSD
-- simplify I/O operation of devices
- - virtio host implementation
- - could use the driver (of virtio)<br> in Linux 
-
-<div class="right" style="width: 35%">
-<img src="figs/lkl-arch.png" width=100%>
-
-<br>
-<small>
-Purdila et al., LKL: The Linux kernel library, RoEduNet 2010.
-</small>
-</div>
-
->>>
-
-## Benefits
-
-- **operating system personality**
- - userspace library has less deployment cost
- - (less ossification of new features)
-- **well-matured code base in various ways**
- - (e.g.) Linux kernel running in userspace
- - (e.g.) Application embeded OS (unikernel)
- - small kernel, a bunch of library
- - but in a different shape
-
-
->>>
-
-<!-- .slide: data-background="figs/cs-thomas.png" -->
-
-> Any problem in computer science can be solved with another level of __indirection__.
-
->(Wheeler and/or Lampson)
-
-
-
-<br /><small>
-img src: https://www.flickr.com/photos/thomasclaveirole/305073153
-</small>
-
->>>
-
-### What is reusing monolithic kernel ?
-
-- Anykernel: originally in NetBSD rump kernel 
-
-
->We define an anykernel to be an organization of kernel code which allows the kernel's **unmodified** drivers to be **run in various configurations** such as application libraries and microkernel style servers, and also as part of a monolithic kernel.  -- Kantee 2012.
-
-- Using (*unmodified*) high-quality code base of monolithic kernel
-- on different environment in different shape
-- by **gluing** additional stuffs 
-
-
-Note:
-
-様々仮想化技術はあり、用途もあるが、「まだ別の仮想化技術が便利で必要で
-すよ」という話と、「その仮想化技術にまだ課題がありますよ」という話を、
-Linux カーネルを題材としてお話。
-
->>>
-
-<div class="left" style="width: 40%">
 <br>
 <br>
-<img src="figs/anykernel-pre.png" width=100%>
-</div>
 
-
-<div class="right" style="width: 40%">
-<img src="figs/anykernel-post-en.png" width=100%><!-- .element: class="fragment" data-fragment-index="1" -->
-</div>
+- Improve the presence of IIJlab
 
 >>>
 
-## (a bit of) History
+### 1. Performance investigation on userspace network stack
 
-- rump: 2007 (NetBSD)
-- LKL: 2007 (Linux)
-- DCE/LibOS: 2008 (Linux/FreeBSD)
-- LibOS/LKL revival: 2015
- - LibOS merged to LKL
+- Goals
+ - Identify bottlenecks
+ - Understand strength/weakness of userspace network stack
 
->>>
-
-<img src="figs/lwn-libos-150408.png" width=28%>
-<img src="figs/hnews-1503.png" width=28%><br>
-<img src="figs/phoronix-1503.png" width=28%>
-<img src="figs/mynavi-libos.png" width=28%>
-
-<small>
-http://news.mynavi.jp/news/2015/03/25/285/ <br>
-https://news.ycombinator.com/item?id=9259292 <br>
-http://www.phoronix.com/scan.php?page=news_item&px=Linux-Library-LibOS <br>
-http://lwn.net/Articles/639333/ <br>
-</small>
+- Activities
+ - Benchmarks with synthesized traffic (netperf)
+ - Measurement of timing accuracy with packet pacing + TCP-BBR (Linux 4.9)
 
 >>>
 
-## LKL v.s. LibOS
+## Performance improvements (so far)
 
-<div class="left" style="width: 50%">
-<img src="figs/lkl-arch.png" width=100%>
-LKL
-</div>
-
-<div class="right" style="width: 50%">
-<img src="figs/libos-arch.png" width=75%>
-<br>
-LibOS
-</div>
+- Offload features (TSO, checksum by google)
+- thread optimization (by Google)
+- zero-copy (WIP, by Google)
+- use of green-thread (myself)
 
 >>>
 
-## LKL v.s. LibOS (cont'd)
-
-- LoC:
- - arch/lkl (LKL) < arch/lib (LibOS)
- - diff: the amount of stub code
-- commons
- - no modification to the original Linux code
- - description of kernel context (by POSIX thread)
- - outsourced resources (clock, memory, scheduler)
- - CPU independent architecture
-- diffs
- - LibOS: implemented with higher API (timer, irq, kthread) by pthread
- - LKL: implement IRQ, kthread, timer with pthread in lower layer
-
-Note:
-
-reimplementation of timer API is required for simulation's feature, time warp,
-
-
----
-
-## Implementation
-
->>>
-
-## Internals
-<div class="left" style="width: 40%">
-<img src="figs/lkl-arch.png" width=100%>
-</div>
-
-
-<br>
-1. Host backend (host_ops)
-1. CPU independent arch. (arch/lkl)
-1. Application interface
-
-
-Note:
- - bridge (real) userspace with library kernel
-
-(FIXME: add diagram)
-
-
->>>
-
-## 1. host backend
-
-<div class="left" style="width: 40%">
-<img src="figs/lkl-arch-host.png" width=100%>
-</div>
-
-- environment *dependent* <br>part
- - unify an interface across <br> different platforms
- - (rump-hypercall like)
-- device interface with **Virtio**
- - block device <=> disk image
- - networking <=> TAP, <br> raw socket, DPDK, VDE
-
->>>
-## 2. CPU independent architecture
-
-<div class="left" style="width: 40%">
-<img src="figs/lkl-arch-kernel.png" width=100%>
-</div>
-
-
-
-architecture (arch/lkl)
-- transparent architecture bind <br> (as CPU arch)
- - require no modification to  <br>the other
-- 2800 LoC
- - thread information (struct <br> thread_info)
- - irq, timer, syscall handler
- - access to underlying layer <br> by host_ops
-
->>>
-
-## 3. Application interface
-
-<div class="left" style="width: 40%">
-<img src="figs/lkl-arch-api.png" width=100%>
-</div>
-
-<br><br>
-1. use exposed API (LKL syscall)
-2. use host libc (LD_PRELOAD)
-3. extend (alternative) libc
-
->>>
-
-## API 1: use exposed API (LKL syscall)
-
-- call entry points of LKL kernel
- - *lkl_sys_open()*, *lkl_sys_socket()*
-- *almost* same as ordinal syscalls
- - return value, *errno* notification are<br> different
-- can use LKL syscall *and* host syscall <br> simultaneously
- - read ext4 file by lkl_sys_read() => <br>write into host (Windows) by write()
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-syscall-1.png" width=100%>
-</div>
-
->>>
-## API 2: hijack host standard library
-
-- dynamically replace symbols <br> of host syscalls (of libc)
- - LD_PRELOAD
- - socket() => lkl_sys_socket()
-- can use host binary (executable) as-is
-- limitation of replaceable symbols
-- needs syscall translation on <br>non-linux host
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-syscall-hijack.png" width=100%>
-</div>
-
->>>
-## API 3: extend (alternative) libc
-
-- **only** call LKL syscall with our own libc
-- also introduce as a virtual <br>CPU architecture
-- a program can link this instead of<br> host libc
- - can't access to (underlying) host <br>resource directly via this lkl syscall
-- as a patch for musl libc
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-syscall-musl.png" width=100%>
-</div>
-
->>>
-
-## Usecase (applications)
-
-- Use Case 1: instant kernel bypass
-- Use Case 2: programs reusing kernel code in userspace
-- Use Case 3: unikernel
-
->>>
-
-## Use Case 1: instant kernel bypass
-
-- syscall redirection by LD_PRELOAD
-- can use both LKL and host syscalls
-
-<br> <br>
-
-new feature without touching host kernel
-
-```
-LD_PRELOAD=liblkl-super-tcp++.so firefox
-```
-
->>>
-
-## Use Case 2: programs reusing kernel code in userspace
-- use kernel code without **porting**
- - mount a filesystem w/o root privilege
-- can use both LKL and host syscalls
-<p>
-- e.g., access to disk image of ext4 format on Windows
- 1. open disk image (*CreateFile()*)
- 1. Mount (*lkl_sys_mount()*)
- 1. read a file in the disk image (*lkl_sys_read()*)
- 1. write a file to windows side (*WriteFile()*)
-
-
->>>
-
-## Use Case 3: Unikernel
-
-- single-application contained LKL
- - python + LKL, nginx + LKL
-- only LKL syscalls available
- - musl libc extension
-- rump hypcall (frankenlibc)
- - running on non-OS environment
- - (on Xen Mini-OS via rumprun)
-- Work in progress
-
-<div class="right" style="width: 35%">
-<img src="figs/CloudOSDiagram.png">
-
-<small>
-- http://www.linux.com/news/enterprise/cloud-computing/751156-are-cloud-operating-systems-the-next-big-thing-
-</small>
-</div>
-
-<!--
-<div class="right" style="width: 40%">
-<img src="figs/frankenlibc-stack.png" width=70%>
-</div>
--->
-
->>>
-
-## demos with linux kernel library
-
-<div class="left" style="width: 50%">
-<img src="figs/franken-linux-ping6.gif" width="840">
-Unikernel on Linux (ping6 command embedded kernel library)
-</div>
-
-<div class="right" style="width: 50%">
-<img src="figs/franken-qemu-arm-hello.gif" width="840">
-Unikernel on qemu-arm (hello world)
-</div>
-
----
-
-## Kernel bypass/userspace networking
-
->>>
-
-## Network Stack
-
-- Why in kernel space ?
- - the cost of packet was <br>expensive at the era ('70s)
- - now much cheaper
-
-- Getting fat (matured) <br>after decades
- - code path is longer <br> (and slower)
- - hard to add new features
- - faced unknown issues
-
-<div class="right" style="width: 45%">
-<img src="figs/fat-kernel.png">
-<small>
-img src: http://www.makelinux.net/kernel_map/
-</small>
-</img>
-</div>
-
->>>
-
-## Alternate network stacks
-
-- lwip (2002~)
-- Arrakis [OSDI '14]
-- IX [OSDI '14]
-- MegaPipe [OSDI '12]
-- mTCP [NSDI '14]
-- SandStorm [SIGCOMM '14]
-- uTCP [CCR '14]
-- rumpkernel [ATC '09]
-- FastSocket [ASPLOS '16]
-- SolarFlare (2007~?)
-- StackMap [ATC '16]
-- libuinet (2013~)
-- SeaStar (2014~)
-- Snabb Switch (2012~)
-
-Note:
-
-218	lwip
-85	Arrakis
-78	IX
-63	MegaPipe
-44	mTCP
-32	SandStorm
-17	uTCP
-13	rumpkernel
-2	FastSocket
-1	SolarFlare
-1	StackMap
-1	libuinet
-1	SeaStar
-
->>>
-
-## Motivations
-
-- Socket API sucks
- - StackMap, MegaPipe, uTCP, SandStorm, IX
- - New API: no benefit with existing applications
-- Network stack in kernel space sucks
- - FastSocket, mTCP, lwip (SolarFlare?)
-- Compatibility is (also) important
- - rumpkernel, libuinet, Arrakis, IX, SolarFlare
-- Existing programming model sucks
- - SeaStar
-
-
-Note:
-
-## Socket API issues
-- VFS overhead
-- non-batchable (**{send,recv}mmsg**)
-## kernel space is a source of ossification?
-## generalization costs a lot
-- rumpkernel + netmap 
-## seastar ?
-
->>>
-
-## Techniques
-
-- batching (syscall/NIC access)
- - Arrakis, IX, MegaPipe, mTCP, SandStorm, uTCP
-- Utilize feature-rich kernel stack
- - rumpkernel, fastsocket, StackMap
-- Porting to userspace stack
- - libuinet, SandStorm
-- Kernel bypass (userspace network stack)
- - mTCP, SandStorm, uTCP, rumpkernel, libuinet, lwip, SeaStar
-- bypass technique itself
- - netmap, PF_RING, raw socket, Intel DPDK
-- Connection locality (multi-core scalability)
- - SeaStar, MegaPipe, mTCP, fastsocket, .....
-
-Note:
-- Full scratch
- - lwip (Arrakis, IX, SolarFlare), mTCP, uTCP, SeaStar
-
->>>
-
-## Implementation
-
-- Full scratch
- - lwip (Arrakis, IX, SolarFlare?), mTCP, uTCP, SeaStar
-- Porting based
- - libuinet, SandStorm
-- New API
- - MegaPipe, StackMap
-- Anykernel
- - rumpkernel, (LKL)
-
->>>
-
-## What's still missing ?
-
-- some solves problems by **specialization**
- - avoiding generality tax
- - performance w/ specialization v.s. more features w/ generalization
- - e.g., less TCP stack features, new API breaks existing applications support.
-- **specialized** v.s. **generalized**
- - generalization often involves **indirection**
- - indirection usually introduces complexity (Wheeler/Lampson)
-- performant **and** generalized ?
-
->>>
-
-### Specialization v.s. Generalization
-
-<normal>
-- MegaPipe [OSDI '12]
- - *outperforms baseline Linux .. **582%** (for short connections).*
- - New API for applications (no existing applications benefit)<!-- .element: class="fragment" data-fragment-index="1" -->
-- mTCP [NSDI '14]
- - *improve... **by a factor of 25** compared to the latest Linux TCP*
- - implement with very limited TCP extensions<!-- .element: class="fragment" data-fragment-index="1" -->
-- SandStorm [SIGCOMM '14]
- - *our approach ..., **demonstrating 2-10x** improvements*
- - specialized (no existing applications benefit)<!-- .element: class="fragment" data-fragment-index="1" -->
-- Arrakis [OSDI '14]
- - *improvements of **2-5x in latency and 9x in throughput** .. to Linux*
- - utilize simplified TCP/IP stack (lwip) (loose feature-rich extensions)<!-- .element: class="fragment" data-fragment-index="1" -->
-- IX [OSDI '14]
- - *improves throughput ... **by 3.6x** and reduces latency **by 2x***
- - utilize simplified TCP/IP stack (lwip) (loose feature-rich extensions)<!-- .element: class="fragment" data-fragment-index="1" -->
-
-Note:
-- netmap [ATC '12]
- - *a single core ... can send or receive 14.88 Mpps (**the peak packet rate** on 10 Gbit/s links).*
-
->>>
-
-Sigh
-
----
-
-## Performance study
-
->>>
-
-## Conditions
+## Benchmarks
 
 - ThinkStation P310 x2
  - CPU: Intel Core i7-6700 CPU @ 3.40GHz (8 cores)
@@ -559,7 +81,6 @@ Sigh
  - NIC: X540-T2
 - Linux 4.4.6-301 (x86_64) on Fedora 23
  - Linux bridge (X540 + tap/raw socket)
- - *no DPDK*... (can't with hijack, etc)
 - netperf (git ~v2.7.0)
  - netserver (native)
  - netperf (varied)
@@ -568,197 +89,396 @@ Sigh
 
 >>>
 
-## Conditions (cont'd)
+### Results (TCP_RR, TCP_STREAM, UDP_STREAM)
 
-- combinations
- - netperf (sendmmsg) + host stack (**native**)
- - \+ hijack library, native thread (**hijack**)
- - \+ frankenlibc/lkl, green thread (**lkl-musl**)
- - netperf (sendmmsg) + lkl extension + frankenlibc (**lkl-musl (skb pre alloc)**)
-- pinned a processor
- - using taskset command
-- disable/enable offload features (tso/gso/gro, rx/tx cksum)
+<img src="2016-07-12/tx/tcp-rr.png" width=30% onclick="window.open(this.src)">
+<img src="2016-07-12/tx/tcp-stream.png" width=30%>
+<img src="2016-07-12/tx/udp-stream.png" width=30%>
+
+- LKL won by (native) Linux in some conditions
 
 >>>
 
-<img src="2016-07-12/tx/tcp-rr.png" width=80%>
+### Timing accuracy
 
-### TCP_RR (netperf)
+```
+        netperf(client)                    netserver
+        +------+        +---------+       +--------+
+        |      |        |         |       |        |
+        |sender+--------+middlebox+------+|receiver|
+        |      |        |         |       |        |
+        +------+        +---------+       +--------+
+        cc: BBR         1% pkt loss
+        qdisc: fq       100ms delay
+```
 
->>>
-
-<img src="2016-07-12/tx/udp-stream.png" width=80%>
-
-### UDP_STREAM (netperf)
-
->>>
-
-<img src="2016-07-12/tx/udp-stream-pps.png" width=80%>
-
-### UDP_STREAM (pps, netperf)
-
->>>
-
-<img src="2016-07-12/tx/tcp-stream.png" width=80%>
-
-### TCP_STREAM (netperf)
+- BBR uses packet pacing with `fq` queue discipline to avoid burst
+- w/ high-resolution timer (nano second resolution)
 
 >>>
 
-<img src="2016-08-03/tx/tcp-stream.png" width=80%>
+### Timing accuracy
 
-### TCP_STREAM+TSO (netperf)
+<img src="lkl-bbr-result/170111/hrtimer-delay.png" width=50%>
 
->>>
+- timer accuracy := (ts of a timer fired) - (ts of a timer scheduled)
 
-## (ref.) LibOS results (as of Feb. 2015)
-
-<img src="figs/nuse-benchmark-host.png" width=100%>
-
-- 1024 bytes UDP, own-crafted tool
-
-- throughput: <10% of Linux native
+- timer event
+ - delayed schedule of a packet (i.e., pacing)
+ - trying to decrease the queue length of middleboxes
 
 >>>
 
-## Observations (of benchmark)
+## Other (non-expected) output
 
-- Native thread vs Green thread
- - better TCP_RR w/ native thread (pthread)
- - better TCP_STREAM/UDP_STREAM w/ green thread
- - ???
-- avoiding dynamic allocation contributes a lot
-- penalized over MTU-sized payload on host stack (?)
+- Proposed a change to TCP-BBR (in low-resolution timer case)
 
----
-
-## Summary
-
-- Morphing monolithic kernel into an Anykernel
-- Various use cases
- - Userspace network stack (kernel bypass)
- - Unikernel
-- Performance study in progress
-
-
-https://github.com/lkl/linux
-
+https://groups.google.com/d/msg/bbr-dev/sNwlUuIzzOk/ztFEA8jCDAAJ
 
 >>>
 
-## Reference
-- Linux Kernel Library
- - Purdila et al., LKL: The Linux kernel library, RoEduNet 2010.
+### 1. Performance investigation on userspace network stack
+
+- **What I did**
+ - throughput/delay improvements
+ - investigation for concerns about userspace facilities
+- **Overall (self) rating**
+ - so so
+
+>>>
+
+### 2. Show the PoC of unikernel using LKL
+
+- Unikernels are[1]
+ - specialized
+ - single address space
+ - constructed by using<br> library operating systems
+- Single purpose
+ - massive guests cloud
+
+- Use Linux kernel code (as a library) <br> to build unikernel
+ - *generic* library should be used  <br> with different application
+
+<div class="right" style="width: 40%">
+<img src="figs/CloudOSDiagram.png" width=100%>
+</div>
+
+<small>
+[1] Madhavapeddy et al., "Unikernels: Rise of the virtual library operating system.", ACM Queue 11.11 (2013): 30.
+
+</small>
+
+>>>
+### 2. Show the PoC of unikernel using LKL (cont'd)
+
+- Hello world-ish applications
+- Underlying platform
+ - qemu (x86_64, arm)
+ - POSIX-ish OS
+ - (not yet) Xen, bare-metal
+- Upper applications
+ - nginx, ghc, netperf
+
+<div class="right" style="width: 40%">
+<img src="figs/frankenlibc-stack.png" width=100%>
+</div>
+
+>>>
+### 2. Show the PoC of unikernel using LKL (cont'd)
+
+- **What I did**
+ - Implement rump-hypercall interface
+ - provide LKL-specific std library
+- **Overall (self) rating**
+ - good
+
+>>>
+### 3. Upstream LKL code to Linux mainline
+
+- no recent communications (on LKML/netdev)
+
+- **What I did**
+ - organized a conference (netdev1.2)
+ - talk locally
+- **Overall rating**
+ - not good
+ - keep doing further
+
+>>>
+
+## Publications
+
+- Refereed papers
+ - Yuta Tokusashi, Yohei Kuga, Ryo Nakamura, Hajime Tazaki, Hiroki Matsutani, mitiKV: An Inline Mitigator for DDoS Flooding Attacks, Internet Conference 2016
+ - 金津 穂, 田崎 創, 宇夫 陽次朗, 山田 浩史, クラウド環境を指向するライブラリ OS の起動にかかる時間の比較およびその分類, Internet Conference 2016
+
+- Talks
+ - 第38回 Linux Kernel Library: 再利用可能なモノリシックカーネル / 2016年4月
+ - Direct Code Execution as a regression test framework for Linux networking, AIST invited talk vol.1 July 22, 2016
+ - Linux Kernel Library - Reusing Monolithic Kernel, AIST invited talk vol.2 July 22, 2016
+
+>>>
+
+## Other activities
+
+- Conference organization
+ - TPC Chair: Workshop on ns-3 2016
+ - TPC: Workshop on ns-3 2017
+ - TPC: International Workshop on Vehicular Adhoc Networks for Smart Cities (IWVSC '16)
+ - TPC Chair: Internet Conference 2016 (IC2016)
+ - Organization Chair: Linux netdev 1.2 conference
+
+>>>
+
+## Open source
+
+- LKL
  - https://github.com/lkl/linux
-- Rumpkernel (dissertation)
- - Kantee, Flexible Operating System Internals: The Design and Implementation of the Anykernel and Rump Kernels, Ph.D Thesis, 2012
-- Linux LibOS in general
- - Tazaki et al. Direct Code Execution: Revisiting Library OS Architecture for Reproducible Network Experiments, CoNEXT 2013
- - http://libos-nuse.github.io/ (LibOS in general)
- - https://lwn.net/Articles/637658/
+ - https://github.com/libos-nuse/frankenlibc
+ - https://github.com/libos-nuse/rumprun
+- ns-3
+ - http://code.nsnam.org/ns-3-dce
+
+>>>
+
+## Budget: R/D HW/SW/etc.
+
+none.
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+>>>
+
+## Budget: Trip
+
+- Oversea
+ - (MUST) WNS3, Seattle/USA (June)
+ - ~~(SHOULD) OSIO, Cambridge/UK (April)~~
+ - ~~(SHOULD) APsys 16, Hong Kong/CN (August)~~
+- Domestic
+ - (MUST) Linux netdev1.2, Tokyo (October)
+ - (SHOULD) IC2016, Tokyo (October)
+
+- not planned
+ - USENIX ATC 16, Denver/USA (June)
+ - JAIST meetup, JAIST (December)
+
 
 
 ---
 
-## Backups
+# 2017 Research Plan
 
 >>>
 
+## Research Plan
 
-## Recent Updates
+1. (cont'd) Performance investigation on userspace
+ - measurement, analysis, and improvement
+1. (cont'd) LKL Unikernel
+ - Run real applications/services
+ - Run on commercial cloud service
+1. <span style="color: gray"> (cont'd, LKL upstreaming)</span>
+
+>>>
+
+## Budget: R/D HW/SW/etc.
+
+- iPad mini
+ - for paper reading
+
+>>>
+
+## Budget: Trip
+
+- Oversea
+ - (SHOULD) ATC 17, Santa Clara/USA (July)
+ - (SHOULD) netdev 2.1, Montreal/Canada (April)
+ - (SHOULD) netdev 2.2, Portugal (October)
+ - (MAY) FOSDEM, Brussels/Belgium (February)
+- Domestic
+ - (MUST) IC 2017, ?? (October/November)
+
 
 
 >>>
 
-## Updates (diff to lkl)
+## Paper story line
+### (for userspace network stack)
 
-- (musl) libc integration
-- rump hypercall interface
- - via frankenlibc tools (for POSIX environment)
- - via rumprun framework (for baremetall/xen/kvm environment)
-- more applications
- - netperf (signal handling, etc)
- - nginx
- - ghc (Haskell runtime)
-- performance study
-
->>>
-
-## libc integration
-
-- standard lib for LKL
- - all syscall direct to LKL
- - application can use LKL *transparently* <br>
-   no special modifications or hijack needed
-- based on musl libc
- - introduce new (sub) architecture **lkl**
-
-<div class="right" style="width: 30%">
-<img src="figs/lkl-syscall-musl.png" width=100%>
-</div>
+1. Current OS sucks
+ - no user-oriented extensibility
+ - no speedy userspace network stack & feature-richness
+1. Contributions
+ - benefit both **userspace flexibility** and **feature richness**
+ - Understand concerns about userspace facilities (timing accuracy)
+1. Implementations
+ - to improve speed
+ - to improve timing accuracy
+1. Experiments
+ - benchmark (expectation: comparable to native)
+ - timing accuracy (high-resolution timer in userspace)
 
 >>>
 
-## rump hypercall interface
+## Schedule
 
-- replacement of LKL host_ops
- - or yet-another new host environment (rump)
-- has two thread primitives
- - pthread-based (as LKL does)
- - ucontext-based (more efficient on non-MP)
+- (2017.1) IIR deadline
+- (2017.2) USENIX ATC paper
+- (2017.2) netdev2.1 proposal
+- (2017.4) netdev2.1
+- (2017.7) USENIX ATC
+- (2017.8) netdev2.2 proposal
+- (2017.10) netdev2.2
+- (2017.10,11?) IC2017
 
-- can reduce
- - the effort of host_ops maintainance
- - complexity of tall abstraction turtle
 
-<div class="right" style="width: 30%">
-<img src="figs/lkl-rumphypcall.png" width=100%>
-</div>
+---
 
->>>
 
-## rump hypcall (cont'd)
+# Backups
 
-- integration of
- - libc (musl for LKL, netbsd libc for rumpkernel)
- - rump hypcall (on linux, freebsd, netbsd, qemu-arm, spike)
- - host (platform) support code
-- frankenlibc
- - has two *namespaced* libc(s)
- - hyper call implementation can use libc
+---
+
+1. Background
+1. Motivations
+ - Why we're working on this
+ - generalization has beaten by specialization
+1. Solutions
+ - How to address the issue ?
+1. Evaluation
+ - How this is good idea or not
+ 1. Throughput
+ 1. Timer accuracy
+1. Progress
+ - How far to the goal ?
+ - proposed a change to TCP-BBR
+ - investigation on high-resolution timer (hrtimer)
+1. Ongoings
+ - complete hrtimer investigation (accuracy issues)
+ - champion data collections (best case, + worst case)
+
+
+---
+
+## Motivations (why I'm doing this ?)
+
+1. Software is no longer soft
+ - i.e., new feature (in operating system core) is hard to deploy 
+1. Existing userspace network stacks escape from the feature-richness
+ - i.e., Linux sucks
+
 <br>
-- provides
- - a **libc.a**
- - cross-build toolchains (rumprun-cc, etc)
+- ex. Userspace facilities are not considered to do a critical job
+ - lack of privilege, overhead (of accessing various resources)
+
+> Providing timing accuracy in userspace TCP stack is a ridiculous idea.
+>
+> Dave S. Miller (@ netdev 1.2 tokyo)
 
 >>>
 
-## Usage
+# Motivations (cont'd)
 
-- build
+- Restructure a network stack to address those issue
+- Don't reimplement from scratch
+ - Reuse existing code as much as possible
 
-```
-% ./configure CC=rumprun-cc ; make
-```
+- Anykernel architecture
 
-- execution (with rexec launcher)
+---
 
-```
-% rexec ./nginx disk-nginx.img tap:tap0 -- -c nginx.conf
-```
+# Solutions
 
-rexec executable [disk image file] [NIC] -- [executable specific options]
+- Linux kernel library
+ - A library of Linux (kernel code)
+ - Anykernel architecture
+- No port, no reimplement, no full-scratch
+ - Benefit feature-richness
+
+<div class="right" style="width: 35%">
+<img src="figs/lkl-arch.png" width=100%>
+
+<br>
+<small>
+Purdila et al., LKL: The Linux kernel library, RoEduNet 2010.
+</small>
+</div>
 
 >>>
 
-## Codes
+## LKL in a nutshell
 
-- https://github.com/libos-nuse/lkl-linux
-- https://github.com/libos-nuse/musl
-- https://github.com/libos-nuse/frankenlibc
-- https://github.com/libos-nuse/rumprun
-- https://github.com/libos-nuse/nginx
-- https://github.com/libos-nuse/ghc
+- .
 
+>>>
+
+## Features
+
+- .
+
+---
+
+## Evaluation
+
+
+- How this is good idea or not
+ 1. Throughput
+ 1. Timing accuracy
+
+>>>
+
+## application goodput (TCP_STREAM)
+
+
+>>>
+
+## application goodput (TCP_RR)
+
+- ping/pong (req/rep)
+
+>>>
+
+## application goodput (UDP)
+
+
+
+>>>
+
+## How a timer (clock related event) works in LKL ?
+
+- clocksource
+ - read/provide the current clock value
+ - a system call (clock_gettime(posix), GetSystemTime(win32))
+- clockevent
+ - (host's) timer API
+ - e.g., POSIX timer (timer_create(posix), CreateTimerQueue(win32))
+
+- clockevent is relatively expensive than usual kernel
+ - hw interrupt (timer)
+
+- clocksource read is not that much
+ - a system call v.s. a (single) instruction
+ - clock-related syscalls are not that much expensive (vdso)
+
+>>>
+
+<img src="lkl-bbr-result/170111/hrtimer-delay.png" width=65%>
+
+- timer accuracy := (ts of a timer fired) - (ts of a timer scheduled)
+
+- timer event
+ - delayed schedule of a packet (i.e., pacing)
+ - trying to decrease the queue length of middleboxes
 
 
