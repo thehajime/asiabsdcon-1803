@@ -18,27 +18,31 @@
 ## アウトライン
 
 - 今なぜ新しい OS が必要なのか
- - クラウド (軽量さが重要)
- - アプリ専用OS (機能追加のしやすさ)
-- 今なぜ安定した OS が必要なのか
+- 新しい用途は新しいOSを生む？
 - Linux Kernel Library (LKL) の概要
  - 通常の OS との比較
  - 簡単な性能検証
+
+Note:
+ - クラウド (軽量さが重要)
+ - アプリ専用OS (機能追加のしやすさ)
 
 >>>
 
 ## オペレーティングシステム
 
-- 幅広く利用される
+- 幅広く利用されるソフトウェア
  - PC
- - 携帯電話/タブレット
+ - 携帯電話・タブレット
+- 目的
+ - 様々な計算資源を管理する
 - 絶えず進化を続ける
  - 機能追加 (OS アップデート)
  - 不具合修正 (セキュリティアップデート)
 
 
-<img src="figs/android-update-entry.jpg" width=30%>
-<img src="figs/windows-update_logo.png" width=20%>
+<img src="figs/android-update-entry.jpg" width=20%>
+<img src="figs/windows-update_logo.png" width=10%>
 <small>
 - http://vba-geek.jp/blog-entry-309.html
 - http://appllio.com/20131229-4708-android-os-update-anatomy
@@ -63,7 +67,7 @@
 
 >>>
 
-## クラウドサービス
+## クラウド環境でのゲストOS
 
 - 特定サービスを提供するための環境
 - 単一機能でしか利用しない<br>場合でもまるごと(一般化)
@@ -118,7 +122,8 @@ http://osv.io/
  - DrawBridge (Windows)
  - Rump kernel (NetBSD/Anykernel)
 
-<img src="figs/fig1-mono-micro-kernel.png" width=70%>
+
+<img src="figs/iir_vol34_trend01.png" width=70%>
 
 
 >>>
@@ -148,10 +153,10 @@ http://osv.io/
 ## Linux Kernel Library
 
 - オープンソースの実装
- - Linux ベースのライブラリOS
+- Linux ベースのライブラリOS
  - 商用利用も多い
  - 開発者も多い
-- **最もモダンな OS !! (私見)**
+ - **最もモダンな OS !! (私見)**
 
 >>>
 
@@ -164,9 +169,10 @@ http://osv.io/
  - on Linux (カーネル迂回)
  - on Windows (仮想マシンなし)
  - on qemu/kvm/xen (アプリ専用OS)
+ - on UEFI/Android (BIOSで<br>ファイル読み書き)
 
-<div class="right" style="width: 40%">
-<img src="figs/fig2-lkl-arch.png" width=100%>
+<div class="right" style="width: 45%">
+<img src="figs/iir_vol34_trend02.png" width=100%>
 </div>
 
 >>>
