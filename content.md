@@ -67,7 +67,7 @@ Note:
 
 >>>
 
-## NUSE: network stack personalization
+## NUSE: network stack personality
 
 - Linux MPTCP as an example
 - Goal
@@ -92,13 +92,14 @@ Note:
  - Ubuntu: virtio/Etherlink (100 Mbps)
 - Software
  - netperf 2.7.x
+ - 10 seconds TCP_STREAM
  - LKL arm/android patched
  - Ubuntu: mptcp-4.4.70 (v0.92),
 
 - 5 trials, over 64-64K byte packet
 
 
-<div class="left" style="width: 40%">
+<div class="left" style="width: 35%">
 <img src="figs/mptcp-exp-topology.png" width=100%>
 </div>
 
@@ -108,7 +109,7 @@ Note:
 
 >>>
 
-## Single path (Wi-Fi only)
+## Single path (Wi-Fi only, 9/14)
 
 <div class="left" style="width: 50%">
 <img src="figs/tcp-stream-sp-tx-170914.png" width=100%>
@@ -130,9 +131,28 @@ Rx (TCP_MAERTS)
 <p>
 
 
+
 >>>
 
-## Multipath
+## Single path (Wi-Fi only, 9/19)
+
+<div class="left" style="width: 50%">
+<img src="figs/tcp-stream-sp-tx-170919.png" width=100%>
+
+Tx (TCP_STREAM)
+</div>
+
+<div class="right" style="width: 50%">
+<img src="figs/tcp-stream-sp-tx-170919.png" width=100%>
+
+Rx (TCP_MAERTS)
+</div>
+
+- LKL consumes more CPU than 9/14 and native
+
+>>>
+
+## Multipath (LTE+WiFI, 9/14)
 
 <div class="left" style="width: 50%">
 <img src="figs/tcp-stream-mp-tx-170913.png" width=100%>
@@ -158,6 +178,81 @@ Rx (TCP_MAERTS)
 - LKL: aggreated (wifi+lte)
 - native: Single path (wifi)
 - CPU utilization: LKL > native
+
+>>>
+
+## Multipath (LTE+WiFI, 9/19)
+
+<div class="left" style="width: 50%">
+<img src="figs/tcp-stream-mp-tx-170919.png" width=100%>
+
+Tx (TCP_STREAM)
+</div>
+
+<div class="right" style="width: 50%">
+<img src="figs/tcp-stream-mp-rx-170919.png" width=100%>
+
+Rx (TCP_MAERTS)
+</div>
+
+>>>
+
+## Multipath (LTE+WiFI, 9/19-2 new mpctl.apk)
+
+<div class="left" style="width: 50%">
+<img src="figs/tcp-stream-mp-tx-170919-2.png" width=100%>
+
+Tx (TCP_STREAM)
+</div>
+
+<div class="right" style="width: 50%">
+<img src="figs/tcp-stream-mp-rx-170919-2.png" width=100%>
+
+Rx (TCP_MAERTS)
+</div>
+
+- CPU util. of LKL always shows 25% (maybe bug)
+- LTE link often (every 2~5 mins?) changed IP address
+ - some results can't use multiple flows
+ - especially LKL doesn't raise netlink events after execution
+
+>>>
+
+### Multipath (LTE+WiFI, 9/19-3, no addr changes)
+
+<div class="left" style="width: 50%">
+<img src="figs/tcp-stream-mp-tx-170919-3.png" width=100%>
+
+Tx (TCP_STREAM)
+</div>
+
+<div class="right" style="width: 50%">
+<img src="figs/tcp-stream-mp-rx-170919-3.png" width=100%>
+
+Rx (TCP_MAERTS)
+</div>
+
+- LTE link and IP addr are stable (no changes)
+ - due to network condition ?
+- Tx with native kernel offers less goodput
+ - even it's using multipath
+
+>>>
+
+## Multipath (LTE+WiFI, 9/22)
+
+<div class="left" style="width: 50%">
+<img src="figs/tcp-stream-mp-tx-170922.png" width=100%>
+
+Tx (TCP_STREAM)
+</div>
+
+<div class="right" style="width: 50%">
+<img src="figs/tcp-stream-mp-rx-170922.png" width=100%>
+
+Rx (TCP_MAERTS)
+</div>
+
 
 ---
 

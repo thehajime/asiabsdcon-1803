@@ -633,6 +633,10 @@
 					var slideNumberH = parseInt( slide.getAttribute( 'data-index-h' ), 10 ) + 1,
 						slideNumberV = parseInt( slide.getAttribute( 'data-index-v' ), 10 ) + 1;
 
+				    // adjust page number since pdf-print doesn't follow the config
+				    slideNumberH = getSlidePastCount() + 1; //slideNumberH == 1 ? 0 : (slideNumberV-1);
+				    slideNumberV = NaN;
+
 					var numberElement = document.createElement( 'div' );
 					numberElement.classList.add( 'slide-number' );
 					numberElement.classList.add( 'slide-number-pdf' );
