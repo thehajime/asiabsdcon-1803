@@ -25,6 +25,8 @@
 
 	var Reveal;
 
+	var slideNum = 0;
+
 	// The reveal.js version
 	var VERSION = '3.3.0';
 
@@ -630,17 +632,40 @@
 
 				// Inject slide numbers if `slideNumbers` are enabled
 				if( config.slideNumber ) {
-					var slideNumberH = parseInt( slide.getAttribute( 'data-index-h' ), 10 ) + 1,
-						slideNumberV = parseInt( slide.getAttribute( 'data-index-v' ), 10 ) + 1;
-
-				    // adjust page number since pdf-print doesn't follow the config
-				    slideNumberH = getSlidePastCount() + 1; //slideNumberH == 1 ? 0 : (slideNumberV-1);
-				    slideNumberV = NaN;
+					var slideNumberH = parseInt( slide.getAttribute( 'data-index-h' ), 10 ),
+						slideNumberV = parseInt( slide.getAttribute( 'data-index-v' ), 10 );
+				    slideNumberV = (isNaN(slideNumberV)) ? 0 : slideNumberV;
 
 					var numberElement = document.createElement( 'div' );
 					numberElement.classList.add( 'slide-number' );
 					numberElement.classList.add( 'slide-number-pdf' );
-					numberElement.innerHTML = formatSlideNumber( slideNumberH, '.', slideNumberV );
+
+    slideNum++;
+	var value = [];
+	var format = 'h.v';
+
+	// Check if a custom number format is available
+	if( typeof config.slideNumber === 'string' ) {
+		format = config.slideNumber;
+	}
+
+	switch( format ) {
+		case 'c':
+			value.push( slideNum );
+			break;
+		case 'c/t':
+			value.push( slideNum, '/', getTotalSlides() );
+			break;
+		case 'h/v':
+			value.push( slideNumberH + 1 );
+			if( isVerticalSlide() ) value.push( '/', slideNumberV + 1 );
+			break;
+		default:
+			value.push( slideNumberH + 1 );
+			if( isVerticalSlide() ) value.push( '.', slideNumberV + 1 );
+	}
+
+					numberElement.innerHTML = formatSlideNumber( value[0], value[1], value[2] );
 					background.appendChild( numberElement );
 				}
 			}
