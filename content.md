@@ -10,7 +10,7 @@ Cristina Opriceana, **Hajime Tazaki**  (IIJ Research Lab.)
 
 Linux netdev 2.2, Seoul, Korea
 
-07 Nov. 2017
+08 Nov. 2017
 </span>
 
 Note:
@@ -50,11 +50,20 @@ Note:
 
 ---
 
+## Librarified Linux taLks (LLL)
+
+- Userspace network stack (NUSE) in general (netdev0.1)
+- kernel CI with libos and ns-3 (netdev1.1)
+- Network performance improvement of LKL (netdev1.2, by Jerry Chu)
+- How bad/good with LKL and hrtimer (BBR) (netdev2.1)
+- Updating Android network stack (netdev2.2)<!-- .element: class="fragment" data-fragment-index="1" -->
+
+>>>
+
 ## Android
 ### a platform of billions devices
 
 - billions installed Linux kernel
-- slow delivery of software updates
 
 - Questions
  - When our upstreamed code <br> available ?
@@ -69,6 +78,7 @@ https://developer.android.com/about/dashboards/index.html
 
 
 Note:
+- slow delivery of software <br>updates
 
 - Android O is 4.4 based ?
 <img src="figs/android-platform-distribution.png" width=100%>
@@ -92,7 +102,7 @@ Note:
 <br>
 
 
-**Looong delivery to all billions devices**
+**Long delivery to all billions devices**
 
 >>>
 
@@ -104,9 +114,15 @@ Note:
  - More modular platform implementation
 - Fushia
  - Rewrite OS from scratch
+- QUIC (transport over UDP)
+ - Rewrite transport protocols on UDP
 
 
-<img src="figs/treble_blog_after.png" width=40%>
+<img src="figs/treble_blog_after.png" width=60%>
+
+
+
+<small>
 
 https://source.android.com/devices/architecture/treble
 
@@ -132,15 +148,22 @@ Note:
 ## Userspace implementations
 
 - Toys, Misguided People
+
+
 - Selfish
 
+<img src="figs/lego-toy.jpg" width=30%>
+<img src="figs/lego-toy2.jpg" width=30%>
+
+
+- Motivation<!-- .element: class="fragment" data-fragment-index="1" -->
+ - Trying to present that a Toy is practically useful<!-- .element: class="fragment" data-fragment-index="1" -->
+
+
+Note:
 
 - Don't care whether toy or not<!-- .element: class="fragment" data-fragment-index="1" -->
 - Do care whether it's useful or not<!-- .element: class="fragment" data-fragment-index="1" -->
-
-(TODO: replace image)
-
-Note:
 
 FUSE or not FUSE ? (FAST '17)
 
@@ -154,7 +177,7 @@ FUSE or not FUSE ? (FAST '17)
  - with a reusable library
 - h/w dependent layer
  - on Linux/Windows <br>/FreeBSD uspace, <br> unikernel, on UEFI, 
- - (ns-3)
+ - network simulator (ns-3)
  - **Android<!-- .element: class="fragment" data-fragment-index="2" -->**
 
 <div class="right" style="width: 40%">
@@ -168,7 +191,12 @@ FUSE or not FUSE ? (FAST '17)
 - Sent RFC (Nov. 2015)
  - no update on LKML since then
 - have evolved a lot
- - various extensions (offload, SMP, json config, unikernel, etc)
+ - fast syscall path
+ - offload (csum, TSO/LRO)
+ - CONFIG_SMP (WIP)
+ - json config
+ - qemu baremetal (unikernel)
+ - on UEFI
 
 
 https://github.com/lkl/linux
@@ -178,27 +206,52 @@ https://github.com/lkl/linux
 ## Extensions to LKL
 
 - Android (arm/arm64) support (lkl/linux#372)
-- raw socket extension (only handle ETH_P_IP) (not yet)
-- hijack library enhance (not yet)
+- raw socket extension (only handle ETH_P_IP) (not upstreamed yet)
+- hijack library enhance (not upstreamed yet)
 
-- HOWTO
+>>>
+
+
+## HOWTO
 
 ```
 % LD_PRELOAD=liblkl-hijack.so netperf XXX # console app
 % setprop wrap.app LD_PRELOAD=liblkl-hijack.so # Java app
 ```
 
+
+```
+{
+"gateway": "10.206.211.1",
+"interfaces": [
+ {
+ "ifgateway": "202.214.86.129",
+ "ip": "202.214.86.168",
+ "mac": "02:87:f8:27:22:02",
+ "masklen": "26",
+ "param": "/dev/tap23",
+ "type": "macvtap"
+ }
+],
+"debug": "0",
+"singlecpu": "1",
+"delay_main": "500000",
+"sysctl": "net.ipv4.tcp_wmem=4096 87380 2147483647;net.mptcp.mptcp_debug=1"
+}
+```
+
 >>>
 
 ## hijack library
 
-- For smooth replacement for Android UI app (java-based)
- - bionic is more familiar than glibc ?
+- For smooth replacement (i.e., hijack) for Android UI app syscalls (java-based)
+ - bionic is more familiar than glibc
  - only socket-related calls are redirected
- - mixture of host and lkl descriptors (can avoid)
+ - handling a mixture of host and lkl descriptors
 
 
-**TODO** (a fig of hijack)
+<img src="figs/lkl-android-hijack.png" width=40%>
+
 
 Note:
 
@@ -217,15 +270,33 @@ Note:
 - Example
  - Multipath TCP (http://multipath-tcp.org/)
  - out-of-tree for long time
- - verify site (cat /proc/net/mptcp base detection)
-   http://amiusingmptcp.de/
 
 Note:
    https://github.com/frootmig/amiusingmptcp/
 
 >>>
 
+## Multipath TCP
+
+- An extension to TCP subsystem
+- application compatibility <br> (unlike SCTP)
+- Use multiple paths
+ - better throughput <br> (aggregation)
+ - smooth recovery from failure <br> (handover)
+
+<div class="left" style="width: 50%">
+<img src="figs/mptcp-tessares-fig.png" width=100%>
+</div>
+
+<small>
+http://blog.multipath-tcp.org/blog/html/2015/12/25/commercial_usage_of_multipath_tcp.html
+
+>>>
+
 ## Demo
+
+- verify site (cat /proc/net/mptcp base detection)
+  http://amiusingmptcp.de/
 
 Note:
 
@@ -242,11 +313,11 @@ amiusingmptcp.de
 
 - Condition
  - To use Linux mptcp w/o replacing kernel
- - With tolerable amount of overhead
 
 - Questions
  - Is NUSE working fine (Will users wanna use it) ?
  - How different from native Linux kernel ?
+ - With tolerable amount of overhead ?
 
 >>>
 
@@ -277,7 +348,7 @@ Note:
 
 >>>
 
-## Single path (Wi-Fi only, 9/14)
+## Single path (Wi-Fi only)
 
 <div class="left" style="width: 50%">
 <img src="figs/tcp-stream-sp-tx-170914.png" width=100%>
@@ -292,7 +363,7 @@ Rx (TCP_MAERTS)
 </div>
 
 - Condition
- - phone: LKL v.s. native kernel
+ - phone: LKL v.s. (stock) kernel
 
 
 - Comparable goodput
@@ -318,31 +389,51 @@ Rx (TCP_MAERTS)
  - phone: LKL v.s. mptcp kernel
 
 
-- Tx with native kernel <br> offers less goodput
+- Goodput (Tx) LKL > native
  - even it's using multipath
-- results are unstable
+- CPU: unstable (LKL)
+ - LKL > native
 
 >>>
 
 ## Multipath TCP (Korea/KT)
 
-(TBA)
+<div class="left" style="width: 50%">
+<img src="figs/tcp-stream-mp-tx-171108.png" width=100%>
+
+Tx (TCP_STREAM)
+</div>
+
+<div class="right" style="width: 50%">
+<img src="figs/tcp-stream-mp-rx-171108.png" width=100%>
+
+Rx (TCP_MAERTS)
+</div>
+
 
 - Condition
- - phone: LKL v.s. mptcp kernel
+ - phone: LKL v.s. (stock) kernel
+ - native uses single-path/<br>LKL uses multi-path
+ - at Ibis hotel
 
-- (TODO) To be measured
+
+- Goodput: No much gain with LKL
+ - even it's using multipath
+- CPU: unstable (LKL)
+ - LKL > native
 
 >>>
 
-## Observation
+## Observations
 
 - IP conflicts may heavier
- - processed twice (host/lkl) per packet
-- Results are always unstable
- - difficult measurement under wireless media
+ - processed **twice** (host/lkl) <br> per packet
+- Results are often unstable
+ - difficult measurement under <br> wireless media
 
-**TODO** (a fig of overhead)
+<div class="right" style="width: 50%">
+<img src="figs/packet-drop-iptables.png" width=100%>
+</div>
 
 ---
 
@@ -351,6 +442,9 @@ Rx (TCP_MAERTS)
 - Implementations
  - DHCP only boot time (handover will fail)
  - IPv4 only on cellular interface (rmnet0)
+- Fundamental limitations of hijack library
+ - asynchronous signal unsafe
+ - MT unsafe
 
 - Required tweaks
  - grant NET_RAW permission (packet socket)
@@ -365,15 +459,38 @@ iptables -A OUTPUT -p tcp --tcp-flags RST RST  -j DROP
 
 ## Further investigations
 
+- other platform
+ - iOS11 now shipped userspace implementation
 - profiling
-- other platform (iOS11 shipped userspace implementation)
 
 >>>
 
 ## Summary
 
 - Use out-of-tree kernel as a library on Android
- - make your code easier to distribute
- - But with privileged installation/operation
-- Comparable performance wireless communication
+ - *make your code easier to distribute*
+ - with privileged installation/operation
+- Comparable goodput over WiFi/LTE
+- Unstable CPU utilization with LKL
+- You can prepare your library file for your own purpose
 
+---
+
+## Backups
+
+
+>>>
+
+## Alternate network stacks
+
+- lwip (2002~)
+- mTCP [NSDI '14]
+- SandStorm [SIGCOMM '14]
+- rumpkernel [ATC '09]
+- SolarFlare (2007~?)
+- libuinet (2013~)
+- SeaStar (2014~)
+
+
+
+**None of them are feature-rich, or one-shot porting <!-- .element: class="fragment" data-fragment-index="1" -->**
