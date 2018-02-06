@@ -1,5 +1,5 @@
-## Library Operating System project
-### research review (2017) and plans (2018)
+## (no title)
+### LibOS/LKL updates
 
 <span>
 <br>
@@ -9,136 +9,125 @@
 
 **Hajime Tazaki**
 
-16 Jan. 2018
+Feb. 2018
 </span>
 
 >>>
 
-## Library OS project
+## Android
+### a platform of billions devices
 
-A system research to relax current ossified Internet (protocol, software)
+- billions installed Linux kernel
 
-- Why ?
- - hard-to-upgrade kernel (network stack)
- - lack of reusablity
-- How ?
- - **reconstruct** (feature-rich) monolithic kernel
- - **as a library**
- - not from scratch (incremental research)
-- Core idea
- - Intelligence is in software part
- - Hardware related: should be small
+- Questions
+ - When our upstreamed code <br> available ?
+ - What if I come up with <br> a great protocol ?
 
-<div class="right" style="width: 30%">
-<img src="figs/lkl-arch-new.png" width=100%>
+<div class="right" style="width: 50%">
+<img src="figs/android-platform-distribution-version.png" width=100%>
+
+<small>
+https://developer.android.com/about/dashboards/index.html
+(Nov. 2017)
+</div>
+
+
+Note:
+- slow delivery of software <br>updates
+
+- Android O is 4.4 based ?
+<img src="figs/android-platform-distribution.png" width=100%>
+
+>>>
+
+## Android (cont'd)
+
+- <span style="color: gray">When our upstreamed code available ? </span>
+ - wait until base kernel is upgraded
+ - backport specific function
+
+- <span style="color: gray">What if I come up with a great protocol ?</span>
+ - craft your own kernel and put into your image
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+**Long delivery to all billions devices**
+
+>>>
+
+## Multipath TCP
+
+- An extension to TCP subsystem
+- application compatibility <br> (unlike SCTP)
+- Use multiple paths
+ - better throughput <br> (aggregation)
+ - smooth recovery from failure <br> (handover)
+
+<div class="left" style="width: 50%">
+<img src="figs/mptcp-tessares-fig.png" width=100%>
+</div>
+
+<small>
+http://blog.multipath-tcp.org/blog/html/2015/12/25/commercial_usage_of_multipath_tcp.html
+
+>>>
+
+## MPTCP on Android
+
+- Linux mptcp isn't upstreamed
+- **have to** upgrade firmware with custom image
+ - hard to upgrade android kernel
+ - kernel version dependency to Android release (5.0 - 8.0)
+
+- Use userspace mptcp (of LKL)
+ - ease of deployment
+ - a little bitter bits..
+
+
+>>>
+
+## How it works
+
+- For smooth replacement (i.e., hijack) for Android UI app syscalls (java-based)
+ - bionic is more familiar than glibc
+ - only socket-related calls are redirected
+ - handling a mixture of host and lkl descriptors
+
+
+<img src="figs/lkl-android-hijack.png" width=40%>
+
+>>>
+
+## Demo
+
+---
+
+## Call for participants
+
+- MPTCP-enabled <br> proxy deployment
+ - your browser will benefit <br> multipath connectivity
+- No kernel upgrade
+
+
+<div class="right" style="width: 50%">
+<img src="figs/mptcp-proxy-polipo.png" width=100%>
 </div>
 
 >>>
 
-## 2017 review
+## Instruction
 
-- topics (planned)
- 1. performance improvement of userspace network (BBR)
- 1. unikernel on hypervisor (as a cloud service)
- 1. network stack personality on mobile device (Android)
-- topic (others)
- 1. unikernel on bare-metal (on embedded devices)
- 1. service chaining with Unix pipe (/dev/stdpkt)
- 1. network stack personality on container service (docker)
- 1. network simulator extensions (ns3, w/ matt)
- 1. **operate** a service with PoC using LKL (mptcp proxy)
-
->>>
-
-## 2017 publications
-
-- papers
- 1. Motomu Utsumi, Hajime Tazaki, Hiroshi Esaki, /dev/stdpkt: A Service Chaining Architecture with Pipelined Operating System Instances in a Unix Shell, AINTEC 2017
-
-- talks
- 1. "Playing BBR with a userspace network stack", 2017/4/7, Linux netdev 2.1.
- 1. Motomu Utsumi, Hajime Tazaki, Hiroshi Esaki, /dev/stdpkt: A Service Chaining Architecture with Pipelined Operating System Instances in a Unix Shell, ACM APSys 2017 (poster)
- 1. Cristina Opriceana, Hajime Tazaki, Network stack personality in Android phone Speakers, Linux netdev 2.2
- 1. (planned) AsiaBSDCon 2018 keynote, March, 2018
-
->>>
-
-## 2017 misc. activities
-
-- research collaboration
- - extending Monroe platform (docker-based) with LKL (w/ Hoang Tran-Viet, UCL)
- - multipath TCP/QUIC experimental platform (w/ Quentin De Coninck, UCL)
- - NEDO (w/ Alaxala, etc)
- - EU-JP (Horizon2020/MIC) proposal (w/ NEC Europe, etc)
-
-- services
- 1. CFI2017 TPC
- 1. WNS3 2017 TPC
- 1. WNS3 2018 TPC
-
->>>
-
-## 2017 trips
-
-1. tazaki: 2017/4/6-4/10 Linux netdev 2.1/Montreal, Canada
-1. tazaki: 2017/9/1-9/5 APSys 2017, Mumbai India
-1. tazaki: 2017/11/7-11/10 Linux netdev 2.2/Seoul, Korea
-1. tazaki: 2017/11/19-11/23 AINTEC 2017, Bangkok, Thailand
-
->>>
-
-## 2017 budget
-
-- not planned
-- 2 android phones
-
->>>
-
-## 2017 self evaluation
-
-- Performance improvements: fair
-- Operation experience with live network: good
-- Promote IIJ's presence (publications, talks, services): fair
-
----
-
-## 2018 challenges
-
-- Expand use-cases of Library OS (LKL)
- - Gain real venues of use-case (lab network, product?)
-- Upstream LKL to (mainline) Linux kernel (cont'd)
-
->>>
-
-## 2018 plans
-
-- topics (planned)
- 1. ~~performance improvement of userspace network (BBR)~~
- 1. unikernel on hypervisor (as a cloud service)
- 1. ~~network stack personality on mobile device (Android)~~
-- topic (others)
- 1. unikernel on bare-metal (on embedded devices)
- 1. ~~service chaining with Unix pipe (/dev/stdpkt)~~
- 1. network stack personality on container service (docker)
- 1. **operate** a service with PoC using LKL (mptcp proxy)
- 1. network simulator extensions (ns3, w/ matt)
- 1. network stack personality on **foreign OS (BSD/macOS)**
-
-
->>>
-
-### 2018 budget, travels
-
-- Travels
- - HotCloud'18
- - APSys '18
- - Linux netdev 3.1, 3.2
- - (EuroBSDCon ?)
-
-
-- Budget
- - 1 or 2 VPSs
-<br>
-<br>
-<br>
-<br>
+- configure a proxy server
+ - in your system config, or your browser config
+- proxy
+ - 202.214.86.168:22
+ - auth: lkl/mptcp
+- feedback
+ - `#lkl-exp` (slack)
+ - ML (iijlab@iij.ad.jp)
