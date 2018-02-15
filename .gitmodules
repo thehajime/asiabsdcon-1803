@@ -1,3 +1,12 @@
+[submodule "frankenlibc"]
+	path = frankenlibc
+	url = git://github.com/libos-nuse/frankenlibc
+[submodule "rumprun-packages"]
+	path = rumprun-packages
+	url = git://github.com/libos-nuse/rumprun-packages
+[submodule "rump-nginx"]
+	path = rump-nginx
+	url = git://github.com/libos-nuse/rump-nginx
 [submodule "figs"]
 	path = figs
 	url = git@github.com:thehajime/slide-figs.git

@@ -1,0 +1,131 @@
+version: 2
+general:
+  artifacts:
+
+do_steps: &do_steps
+ steps:
+  - run: echo "$OS-$RUMP" > ~/_os_rump
+  # XXX: this should be in Dockerfile
+  - run: echo 'export PATH=/usr/lib/ccache:/home/ubuntu/project/frankenlibc/rump/bin:${PATH}' >> $BASH_ENV
+  - run: sudo ln -s /usr/bin/ccache /usr/lib/ccache/x86_64-rumprun-linux-gcc
+  - restore_cache:
+      key: code-tree-shallow
+  - run:
+      name: checkout build tree
+      command: |
+        mkdir -p ~/.ssh/
+        ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+        if ! [ -d .git ]; then
+          git clone --depth=1 $CIRCLE_REPOSITORY_URL .;
+        fi
+        if [[ $CIRCLE_BRANCH == pull/* ]]; then
+           git fetch --depth=1 origin $CIRCLE_BRANCH/head;
+        else
+           git fetch --depth=1 origin $CIRCLE_BRANCH;
+        fi
+        git reset --hard $CIRCLE_SHA1
+        git submodule update --init
+        cd frankenlibc && git submodule update --init && cd ..
+  - save_cache:
+      key: code-tree-shallow-{{ epoch }}
+      paths:
+        - /home/ubuntu/project/.git
+  - run:
+      name: clean
+      command: |
+        #make distclean
+        rm -rf ~/junit
+        # XXX: gawk is required since mawk in u16.04 raises an error "exceeds implementation size limit"
+        sudo apt-get update && sudo apt-get install -y zlib1g-dev gawk genisoimage
+        # XXX: those can be in arm-baremetal/Dockerfile ?
+        if [[ $OS == *qemu-arm* ]]; then
+          sudo apt-get install -y gcc-arm-none-eabi qemu-system-arm libcap2-bin
+        fi
+  - run: mkdir -p /home/ubuntu/.ccache
+  - restore_cache:
+      key: compiler-cache-{{ checksum "~/_os_rump" }}
+  - run:
+      name: start emulator
+      command: |
+        if [[ $OS == *freebsd* ]]; then
+          cd /home/ubuntu && $QEMU
+        fi
+      background: true
+  - run:
+      name: build frankenlibc
+      command: |
+        cd frankenlibc
+        ./build.sh -q -k ${RUMP} ${OS} ${OPT} notest
+  - run:
+      name: build rumprun-packages
+      command: |
+        cd rumprun-packages/
+        cp ../deploy/config.mk ./
+        cd nginx
+        make
+  - run:
+      name: build rumprun-nginx
+      command: |
+        git clone . rump-nginx/images/data/www/$CIRCLE_PROJECT_REPONAME
+        cd rump-nginx/images/data/www/$CIRCLE_PROJECT_REPONAME && git submodule update --init figs && \
+          rm -rf .git
+        cd ~/project/rump-nginx
+        make images/full.iso
+  - save_cache:
+     paths:
+       - /home/ubuntu/.ccache
+     key: compiler-cache-{{ checksum "~/_os_rump" }}-{{ epoch }}
+     when: always
+  - run:
+      name: wait emulator to boot
+      command: |
+        if [[ $OS == *freebsd* ]]; then
+          while ! $MYSSH -o ConnectTimeout=1 exit 2> /dev/null
+          do
+             sleep 5
+          done
+        fi
+  - run:
+      name: run nginx
+      command: |
+        mkdir -p nginx && \
+        cp -pf rumprun-packages/nginx/bin/nginx frankenlibc/rump/bin/rexec \
+        rump-nginx/images/full.iso deploy/lkl.json nginx/
+        strip nginx/nginx
+        if [ "$OS" == "freebsd" ]; then
+           $MYSCP -P 7722 -pr nginx lkl@localhost: && \
+           $MYSSH "cd nginx && env RUMP_VERBOSE=1 ./rexec ./nginx ./full.iso config:lkl.json -- -c /data/conf/nginx.conf &"
+        else
+           cd nginx
+           RUMP_VERBOSE=0 ./rexec ./nginx ./full.iso config:lkl.json -- -c /data/conf/nginx.conf
+        fi
+  - run:
+      name: create installer
+      command: |
+        echo "env RUMP_VERBOSE=1 ./rexec ./nginx full.iso tap:tap0 config:lkl.json -- -c /data/conf/nginx.conf" \
+           > nginx/lkl-nginx-exec.sh
+        chmod +x nginx/lkl-nginx-exec.sh
+        cd nginx && tar cfz ../lkl-nginx.tar.gz * && cd ..
+        cd deploy && ./addpayload.sh --binary ../lkl-nginx.tar.gz
+  - store_artifacts:
+      path: ~/project/deploy/lkl-nginx.sh
+
+## Customize the test machine
+jobs:
+  freebsd-linux:
+   docker:
+     - image: thehajime/freebsd-test:latest
+     #- image: lkldocker/circleci-freebsd11-x86_64:0.1
+   environment:
+     OS: "freebsd"
+     RUMP: "linux"
+     CC: "x86_64-pc-freebsd11-gcc"
+     OPT: "nocapsicum"
+   <<: *do_steps
+
+
+workflows:
+  version: 2
+  build:
+    jobs:
+     - freebsd-linux

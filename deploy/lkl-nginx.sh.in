@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+uuencode=1
+binary=0
+
+function untar_payload()
+{
+	match=$(grep --text --line-number '^PAYLOAD:$' $0 | cut -d ':' -f 1)
+	payload_start=$((match + 1))
+	if [[ $binary -ne 0 ]]; then
+		tail -n +$payload_start $0 | tar -xzvf -
+	fi
+	if [[ $uuencode -ne 0 ]]; then
+		tail -n +$payload_start $0 | uudecode | tar -xzvf -
+	fi
+}
+
+untar_payload
+
+# exec script
+bash ./lkl-nginx-exec.sh
+
+exit 0
