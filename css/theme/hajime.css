@@ -1,8 +1,11 @@
 /*
 @import url(https://fonts.googleapis.com/css?family=Montserrat:700);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic);
-*/
 @import url(../../lib/font/source-sans-pro/source-sans-pro.css);
+*/
+@import url(../../lib/font/league-gothic/league-gothic.css);
+
+
 section.has-light-background, section.has-light-background h1, section.has-light-background h2, section.has-light-background h3, section.has-light-background h4, section.has-light-background h5, section.has-light-background h6 {
   color: #222; }
 /**

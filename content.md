@@ -14,9 +14,13 @@ IIJ Research Laboratory
 March, 2018, Abscission 2018
 </span>
 
->>>
+---
 
 ## Intro
+
+- Linux in BSD conference
+- Network stack evolution
+- with NetBSD derived technology (rump)
 
 >>>
 
@@ -26,27 +30,79 @@ March, 2018, Abscission 2018
 >>>
 
 ## The original Internet
+
+  <img src="figs/baran-distributed.png" width="70%"/>
+
+- Packet switching network
+ - a basis of end-to-end principle
+ - a basis of hugest platform
+
+<small>
+P. Baran, On Distributed Communications Networks, IEEE Transactions on Communications Systems, 1964
+</small>
+
+
+Note:
+
 - baran's diagram
 - e2e
 
 >>>
 
 ## today's internet
- - yesterday's internet
- - My dream about free-form internet
- - can we ? no..
+
+- not yesterday's Internet
+
+<img src="figs/complex-mind.jpg" width="30%"/>
+<img src="figs/goverment-control.jpg" width="30%"/>
+<img src="figs/security-fast.png" width="15%"/>
+
+various stake holders / governmental control / security fast
+
+<small>
+- refs:
+ - https://justimagine.aurecongroup.com/solving-complex-problems-forget-what-you-currently-know/
+ - https://kentforliberty.liberty.me/letting-government-control-you/
+
+
+Note:
+
+- My dream about free-form internet
+- can we ? no..
+
+- pictures
+ - (middlebox jam)
+ - (governmental control)
+ - (security-first: default deny forwarding)
 
 >>>
 
-## the end of evolution/innovation ??
-- internet is mature enough
-- that we don't have to modify
+## today's internet (cont'd)
 
-- really ? no probablly
+<img src="figs/no-more-e2e.png" width="80%"/>
+
+- a packet is hard to deliver to the others without any modifications
+
+<small>
+- ref:
+https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-network-layers
 
 >>>
 
-## Question
+### the end of evolution/innovation ??
+
+- internet is mature enough (that we don't have to modify)
+- we can create another universe
+
+(figure: end of the world)
+
+- are we satisfied ? no probably
+ - people want to but the system is not ready
+
+>>>
+
+## Questions
+
 - Why do you want to update your network stack ?
  - want to put new idea
  - want to refresh design (e.g., socket API sucks)
@@ -55,43 +111,129 @@ March, 2018, Abscission 2018
 
 ---
 
-## Problems/Frustrations/Reality (2)
- - more ossification/no innovation
- - more low-quality codes
- - more waste of time
- - no productive implementation
- - no more end-to-end
-
+## What's the matter ?
 
 >>>
 
-## more ossification
+## Problems
+
+- more ossification/no innovation  <!-- .element: class="fragment grow" data-fragment-index="1" -->
+- more low-quality codes  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
+- more waste of time  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
+- no productive implementation  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
+- no more end-to-end  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
+- no more experimental platform  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
+
+
+<div class="right" style="width: 20%">
+<img src="figs/problem.jpg" width="100%"/>
+
+<small>
+https://pixabay.com/en/question-problem-think-thinking-622164/
+</div>
+
+>>>
+
+## More ossification
 - two obstacles for new protocol deployment
  - middlebox
  - host OS
 
 >>>
 
-## ossification: middlebox issue
-- olivier's slide
-https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-network-layers
+## Ossification: middlebox
+
+<img src="figs/pkt-process-router-olivier.png" width="80%"/>
+
+TCP segments processed by a router
+<small>
+- ref:
+ - https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-network-layers
 
 >>>
 
-## ossification: host OS upgrade
-- Android's case (netdev22 slide)
-- Docker container
+## Ossification: middlebox (cont'd)
 
-- an example of mptcp
- - (current) middlebox friendly extension => **OK**
+<img src="figs/pkt-process-nat-olivier.png" width="80%"/>
+
+TCP segments processed by a NAT router
+<small>
+- ref:
+ - https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-network-layers
+
+>>>
+
+## Ossification: middlebox (cont'd)
+
+<img src="figs/pkt-process-mbox-olivier.png" width="80%"/>
+
+Possible TCP segments processed by typical middlebox today
+<small>
+- ref:
+ - https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-network-layers
+
+
+>>>
+
+## Ossification: host OS
+
+<img src="figs/micchie-ccr-proto-evo.png" width="60%"/>
+
+- Windowscale, Timestamp
+ - since Windows 2000, Vista: default ON in 2006
+- SACK/TS defaulted Linux 1999, Windows: 2004
+
+<small>
+Honda et al., Rekindling Network Protocol Innovation with User-Level Stacks, A
+CM SIGCOMM CCR, Vol.44, Num. 2, April 2014
+</small>
+
+>>>
+
+## Ossification: host OS (cont'd)
+
+- Updating base kernel is not an easy task
+ - Android still uses older kernel
+ - Container guests use the host kernel (for network stack)
+<br>
+<br>
+
+<img src="figs/android-platform-distribution-version.png" width=60%>
+
+Android OS distribution with the base Linux kernel version
+
+<small>
+https://developer.android.com/about/dashboards/index.html
+(taken Nov. 2017)
+
+
+>>>
+
+## An example: Multipath TCP
+
+- An extension to (traditional) TCP
+ - multipath communication
+ - RFC6824 (experimental)
+ - application compatibility <br> (unlike SCTP)
+
+- Good design ?
+ - middlebox friendly => **OK**
  - unmodified application => **OK**
  - modified kernel => **??**
 
+<div class="left" style="width: 50%">
+<img src="figs/mptcp-tessares-fig.png" width=100%>
+</div>
+
+<small>
+http://blog.multipath-tcp.org/blog/html/2015/12/25/commercial_usage_of_multipath_tcp.html
+
+Note:
 - successfully deployed by apple (since ios7)
 
 >>>
 
-## ossification: a Google's answer
+## Ossification: a Google's answer
 
 - QUIC (Quick UDP Internet Connection)
 
@@ -101,16 +243,19 @@ https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-
  - **middlebox friendly**
 - why UDP (cont'd) ?
  - can be implemented in userspace
- - no need to upgrade host OS
+ - **no need to upgrade host OS**
 
 >>>
 
-## ossification: can others deploy such a way ?
+## Ossification: can others deploy such a way ?
 
-- No
-- Only a giant can
+- No <!-- .element: class="fragment" data-fragment-index="1" -->
+- Only a giant can <!-- .element: class="fragment" data-fragment-index="2" -->
 
-https://dora-world.com/uassets/c0c/eddeebb9668c08fd2a8ffec379c64/dora511A_004_v1.mov.jpg
+<div class="left" style="width: 50%">
+<img src="figs/giant-dora.jpg" width=100%> <!-- .element: class="fragment" data-fragment-index="2" -->
+</div>
+
 
 >>>
 
@@ -200,6 +345,12 @@ sigh
 
 ## 3 APIs
 (from lab seminar slides)
+
+>>>
+
+## Execution
+
+x86_64-rumprun-{linux,netbsd}-gcc
 
 >>>
 
