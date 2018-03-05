@@ -7,3 +7,7 @@
 [submodule "rump-nginx"]
 	path = rump-nginx
 	url = git://github.com/libos-nuse/rump-nginx
+[submodule "figs"]
+	path = figs
+	url = git@github.com:thehajime/slide-figs.git
+	branch = master
