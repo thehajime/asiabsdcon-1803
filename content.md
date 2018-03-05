@@ -679,6 +679,12 @@ Boot latency
 
 *quick boot, reasonable fwd/filter performance, w/o optimizations*  <!-- .element: class="fragment" data-fragment-index="1" -->
 
+>>>
+
+### grep command as firewall
+
+<img src="figs/stdpkt-grep-acl.gif" width=70%>
+
 
 >>>
 
@@ -696,9 +702,14 @@ Boot latency
  <video data-autoplay src="figs/ns-3-dce-mptcp-linux3.5.7-8subf.m4v"></video>
 </div>
 
+Note:
+For those who are not familiar with network simulation, NS is a framework which users can deeply investigate a particular network protocol with an abstracted implementation of the protocol.  abstraction is useful in order to focus on the protocol, but is sometime harmful if various external sources affect to the specific protocol behavior.
+
+ns-2, 3, omnet, Qualnet, matlab, 
+
 >>>
 
-## your experiment
+## Your experiment
 
 <img src="figs/1link-topo.png" width=50%>
 
@@ -707,7 +718,7 @@ Boot latency
 
 >>>
 
-## your experiment (cont'd)
+## Your experiment (cont'd)
 
 <div class="left" style="width: 45%">
 <img src="figs/rocketfuel.png" width=100%>
@@ -769,6 +780,12 @@ Note:
 
 ## Summary
 
+- i've talked about *Linux is great* (sorry)
+- but Linux or xxxBSD doesn't matter
+
+- re-composable operating system kernel
+
+Note:
 - Anykernel, a magic technology for resuability
 - Do not re-implement from scratch, but reuse a great code with the library
 
@@ -779,7 +796,6 @@ Note:
 <h2> Backups </h2>
 
 </section>
-
 
 <section id="appendix" class="stack">
 
