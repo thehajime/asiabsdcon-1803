@@ -60,12 +60,15 @@ body {
   word-wrap: break-word; }
 
 .reveal h1 {
+  font-weight: bold;
   font-size: 3.77em; }
 
 .reveal h2 {
+  font-weight: bold;
   font-size: 2.11em; }
 
 .reveal h3 {
+  font-weight: bold;
   font-size: 1.55em; }
 
 .reveal h4 {
