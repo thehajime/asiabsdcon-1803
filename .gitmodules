@@ -10,3 +10,4 @@
 [submodule "figs"]
 	path = figs
 	url = git@github.com:thehajime/slide-figs.git
+	master = master
