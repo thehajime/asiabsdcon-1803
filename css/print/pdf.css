@@ -133,6 +133,7 @@ ul, ol, div, p {
 	left: 0;
 	width: 100%;
 	z-index: -1;
+	border: 10px solid #FF0000;
 }
 
 /* All elements should be above the slide-background */
