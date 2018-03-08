@@ -21,7 +21,7 @@ March, 2018, AsiaBSDCon 2018
 - i'm going to talk about *Linux is great* (sorry)
 - but Linux or xxxBSD doesn't matter
 
-- re-composable operating system kernel
+- re-composable, re-usable, flexible operating system kernel <br>should make everyone happy
 
 Note:
 
@@ -54,12 +54,16 @@ P. Baran, On Distributed Communications Networks, IEEE Transactions on Communica
 
 Note:
 
-- baran's diagram
-- e2e
+His motivation is to create a sustainable network architecture against nuclear attack, which previous circuit-switching network based on centralized or de-centralized network cannot achieve.  By a newly introduced idea, packet, a chunk of small split message, each node in a distributed network should just forward a packet based on partial header information described in a packet, thus each intermediate node in a network can be replaced by others.
+
+This is super powerful idea, which gives us a flexibility to the message format (a.k.a. protocols), and everybody who wish to can join the network with a small amount of costs.
+
+Thus the Internet has grown to the hugest platform in the world and be a winner.
+And important characteristics is people can easily extend network protocols as the need of users.
 
 >>>
 
-## today's internet
+## Today's internet
 
 - not yesterday's Internet
 
@@ -88,11 +92,11 @@ Note:
 
 >>>
 
-## today's internet (cont'd)
+## Today's internet (cont'd)
 
 <img src="figs/no-more-e2e.png" width="80%"/>
 
-- A packet is hard to deliver to the others without any modifications
+- a packet is hard to deliver to the others without any modifications
 
 <small>
 - ref:
@@ -106,14 +110,14 @@ https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-
 - we can create another universe
 <br>
 <br>
-- are we satisfied ? no probably
+- are we satisfied ?
  - people want to innovate but the system is not ready
 
 >>>
 
 ## Questions
 
-- why do you want to update your system ?
+- why do you want to extend your system ?
  - want to put new idea (I have a great protocol)
  - want to refresh design (socket API sucks)
  - want to optimize implementations (too slow for me)
@@ -143,10 +147,10 @@ https://pixabay.com/en/question-problem-think-thinking-622164/
 
 >>>
 
-## More ossification
+## Protocol ossification
 - two obstacles for new protocol deployment
- - middlebox
- - host OS
+ 1. middlebox
+ 1. host OS
 
 >>>
 
@@ -186,15 +190,20 @@ possible TCP segments processed by typical middlebox today
 
 ## Ossification: host OS
 
-<img src="figs/micchie-ccr-proto-evo.png" width="60%"/>
 
-- Windowscale, Timestamp
- - since Windows 2000, Vista: default ON in 2006
-- SACK/TS defaulted Linux 1999, Windows: 2004
+<img src="figs/tcp-opt-kensuke.png" width="60%"/>
+
+The deployment of protocol extensions takes long
+
+- Standardized
+ - WS,TS: 1992 (RFC1323)
+ - SACK: 1996 (RFC2018)
+- OS
+ - WS, TS: Win 2000/Linux(1999)
+ - SACK: defaulted 1999 (Linux), 2004 (Win)
 
 <small>
-Honda et al., Rekindling Network Protocol Innovation with User-Level Stacks, A
-CM SIGCOMM CCR, Vol.44, Num. 2, April 2014
+Fukuda, Kensuke. "An Analysis of Longitudinal TCP Passive Measurements (Short Paper)." Traffic Monitoring and Analysis 40: 29.
 </small>
 
 >>>
@@ -230,7 +239,6 @@ takeaway: people tend to use older kernel even if vendors release newer software
 - Good design ?
  - middlebox friendly => **OK**
  - unmodified application => **OK**
- - modified kernel => **??**
 
 <div class="left" style="width: 50%">
 <img src="figs/mptcp-tessares-fig.png" width=100%>
@@ -241,6 +249,7 @@ http://blog.multipath-tcp.org/blog/html/2015/12/25/commercial_usage_of_multipath
 
 Note:
 - successfully deployed by apple (since ios7)
+ - modified kernel => **??**
 
 >>>
 
@@ -295,7 +304,7 @@ Note:
 <br>
 - to put a break-through
  - be a part of giant (which I won't)
- - or thinks differently
+ - or thinks differently ?
 
 ---
 
@@ -352,10 +361,6 @@ Note:
 - netmap [ATC '12]
  - *a single core ... can send or receive 14.88 Mpps (**the peak packet rate** on 10 Gbit/s links).*
 
-
->>>
-
-Sigh
 
 >>>
 
@@ -459,9 +464,14 @@ Note:
 
 >>>
 
-## 1. host backend
+<img src="figs/lkl-arch-new.png" width=30%>
+<img src="figs/baremetal-rumpstack.png" width=60%>
 
-<div class="left" style="width: 50%">
+>>>
+
+### 1. host backend
+
+<div class="left" style="width: 45%">
 <img src="figs/lkl-arch-host.png" width=100%>
 </div>
 
@@ -475,7 +485,7 @@ Note:
 >>>
 ### 2. CPU independent architecture
 
-<div class="left" style="width: 55%">
+<div class="left" style="width: 45%">
 <img src="figs/lkl-arch-kernel.png" width=100%>
 </div>
 
@@ -492,9 +502,9 @@ architecture (arch/lkl)
 
 >>>
 
-## 3. Application interface
+### 3. Application interface
 
-<div class="left" style="width: 50%">
+<div class="left" style="width: 45%">
 <img src="figs/lkl-arch-api.png" width=100%>
 </div>
 
@@ -563,17 +573,10 @@ architecture (arch/lkl)
  - Android (long delivery time)
  - container (e.g., docker: shared by others)
 
->>>
+<div class="left" style="width: 30%">
+<img src="figs/lkl-android-hijack.png" width=100%>
+</div>
 
-## NUSE on Android
-
-- syscall replacement (i.e., hijack) for Android (java-based) apps
- - bionic is more familiar than glibc
- - only socket-related calls are redirected
- - handling a mixture of host and lkl descriptors
-
-
-<img src="figs/lkl-android-hijack.png" width=40%>
 
 >>>
 
@@ -654,6 +657,24 @@ Note:
 
 >>>
 
+### grep command as firewall
+
+
+<div class="left" style="width: 40%">
+<br>
+<br>
+<br>
+<br>
+<img src="slide-figs/stdpkt-grep-topo.png" width=100%>
+</div>
+
+
+<div class="right" style="width: 60%">
+<img src="figs/stdpkt-grep-acl.gif" width=100%>
+</div>
+
+>>>
+
 ## NAT, packet filter
 
 
@@ -681,12 +702,6 @@ Boot latency
 
 >>>
 
-### grep command as firewall
-
-<img src="figs/stdpkt-grep-acl.gif" width=70%>
-
-
->>>
 
 ## Network simulation
 
@@ -780,16 +795,47 @@ Note:
 
 ## Summary
 
-- i've talked about *Linux is great* (sorry)
+- i've talked about Linux,
 - but Linux or xxxBSD doesn't matter
 
-- re-composable operating system kernel
+- because operating system kernel can be replaced / reused
+
 
 Note:
 - Anykernel, a magic technology for resuability
 - Do not re-implement from scratch, but reuse a great code with the library
 
+>>>
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+### Linux rumpkernel
+
+<br>
+<br>
+
+Hajime Tazaki (tazaki at iij.ad.jp)
+@thehajime
+
+>>>
+
+## References
+
+- Code
+ - https://github.com/lkl/linux (LKL)
+ - https://github.com/libos-nuse/frankenlibc
+ - https://github.com/libos-nuse/rumprun
+- Articles
+ - https://github.com/thehajime/blog/issues/3 (blog)
+ - http://www.iij-ii.co.jp/en/lab/researchers/tazaki/ (my info)
+
 ---
+
 
 <section id="appendix" class="stack">
 
@@ -798,7 +844,6 @@ Note:
 </section>
 
 <section id="appendix" class="stack">
-
 ## (a bit of) History
 
 - rump: 2007 (NetBSD)
@@ -806,16 +851,15 @@ Note:
 - DCE/LibOS: 2008 (Linux/FreeBSD)
 - LibOS/LKL revival: 2015
  - LibOS merged to LKL
-
 </section>
 
 
 <section id="appendix" class="stack">
 
-<img src="figs/lwn-libos-150408.png" width=28%>
-<img src="figs/hnews-1503.png" width=28%><br>
-<img src="figs/phoronix-1503.png" width=28%>
-<img src="figs/mynavi-libos.png" width=28%>
+<img src="figs/lwn-libos-150408.png" width=28% />
+<img src="figs/hnews-1503.png" width=28% /><br>
+<img src="figs/phoronix-1503.png" width=28% />
+<img src="figs/mynavi-libos.png" width=28% />
 
 <small>
 http://news.mynavi.jp/news/2015/03/25/285/ <br>
@@ -828,6 +872,7 @@ http://lwn.net/Articles/639333/ <br>
 
 
 <section id="appendix" class="stack">
+
 
 ## LKL v.s. LibOS
 
@@ -866,3 +911,5 @@ Note:
 reimplementation of timer API is required for simulation's feature, time warp
 
 </section>
+
+
