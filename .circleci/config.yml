@@ -72,7 +72,7 @@ do_steps: &do_steps
           grep figs content.md | sed "s/.*\(figs\/.*\)\".*/\1/"  | cut -f1 -d' ' | \
           sed "s/\"//" |sort -u && \
           /bin/cp -f `grep figs content.md | sed "s/.*\(figs\/.*\)\".*/\1/"  | cut -f1 -d' ' | \
-          sed "s/\"//" |sort -u` figs2/ && rm -rf figs && mv figs2 figs
+          sed "s/\"//" |sort -u` figs2/ && rm -rf figs && mv figs2 figs && rm -rf .git
         cd ~/project/rump-nginx
         make images/full.iso
   - save_cache:
