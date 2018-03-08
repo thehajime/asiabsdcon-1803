@@ -41,7 +41,7 @@ Note:
 
 ## The original Internet
 
-  <img src="figs/baran-distributed.png" width="70%"/>
+  <img src="figs/baran-distributed.png" width=70%/>
 
 - packet switching network
  - a basis of end-to-end principle
@@ -67,9 +67,9 @@ And important characteristics is people can easily extend network protocols as t
 
 - not yesterday's Internet
 
-<img src="figs/complex-mind.jpg" width="30%"/>
-<img src="figs/goverment-control.jpg" width="30%"/>
-<img src="figs/security-fast.png" width="15%"/>
+<img src="figs/complex-mind.jpg" width=30%/>
+<img src="figs/goverment-control.jpg" width=30%/>
+<img src="figs/security-fast.png" width=15%/>
 
 various stake holders / controlled system / security fast
 
@@ -94,7 +94,7 @@ Note:
 
 ## Today's internet (cont'd)
 
-<img src="figs/no-more-e2e.png" width="80%"/>
+<img src="figs/no-more-e2e.png" width=80%/>
 
 - a packet is hard to deliver to the others without any modifications
 
@@ -139,7 +139,7 @@ https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-
 
 
 <div class="right" style="width: 20%">
-<img src="figs/problem.jpg" width="100%"/>
+<img src="figs/problem.jpg" width=100%/>
 
 <small>
 https://pixabay.com/en/question-problem-think-thinking-622164/
@@ -156,7 +156,7 @@ https://pixabay.com/en/question-problem-think-thinking-622164/
 
 ## Ossification: middlebox
 
-<img src="figs/pkt-process-router-olivier.png" width="80%"/>
+<img src="figs/pkt-process-router-olivier.png" width=80%/>
 
 TCP segments processed by a router
 <small>
@@ -167,7 +167,7 @@ TCP segments processed by a router
 
 ### Ossification: middlebox (cont'd)
 
-<img src="figs/pkt-process-nat-olivier.png" width="80%"/>
+<img src="figs/pkt-process-nat-olivier.png" width=80%/>
 
 TCP segments processed by a NAT router
 <small>
@@ -178,7 +178,7 @@ TCP segments processed by a NAT router
 
 ### Ossification: middlebox (cont'd)
 
-<img src="figs/pkt-process-mbox-olivier.png" width="80%"/>
+<img src="figs/pkt-process-mbox-olivier.png" width=80%/>
 
 possible TCP segments processed by typical middlebox today
 <small>
@@ -191,7 +191,7 @@ possible TCP segments processed by typical middlebox today
 ## Ossification: host OS
 
 
-<img src="figs/tcp-opt-kensuke.png" width="60%"/>
+<img src="figs/tcp-opt-kensuke.png" width=60%/>
 
 The deployment of protocol extensions takes long
 
@@ -623,7 +623,7 @@ originally rumprun and frankenlibc are designed to cooperate with NetBSD rump, b
 
 ## Demo (frankenlibc)
 
-<img src="figs/nginx-frankenlibc-freebsd.png" width="40%">
+<img src="figs/nginx-frankenlibc-freebsd.png" width=40%>
 
 Note:
 - this slides (reveal.js/nginx/lkl+frankenlibc/FreeBSD (on linux))
@@ -757,14 +757,14 @@ Note:
 
 ## Debugging/Testing
 
-<img src="figs/umip-gdb.png" width="45%">
-<img src="figs/valgrind.png" width="50%">
+<img src="figs/umip-gdb.png" width=45%>
+<img src="figs/valgrind.png" width=50%>
 
 >>>
 
 ### Testing with Continuous Integration
 
-<img src="figs/jenkins.png" width="40%">
+<img src="figs/jenkins.png" width=40%>
 
 - Detected bugs (Linux net-next ree)
  - [net-next,v2] ipv6: Do not iterate over all interfaces when finding source address on specific interface. (v4.2-rc0, **during VRF**)

@@ -68,7 +68,9 @@ do_steps: &do_steps
       command: |
         git clone . rump-nginx/images/data/www/$CIRCLE_PROJECT_REPONAME
         cd rump-nginx/images/data/www/$CIRCLE_PROJECT_REPONAME && git submodule update --init figs && \
-          rm -rf .git
+          mkdir figs2 && \
+          /bin/cp -f `grep figs content.md | sed "s/.*\(figs\/.*\)\".*/\1/"  | cut -f1 -d' ' | \
+          sed "s/\"//" |sort -u` figs2/ && rm -rf figs && mv figs2 figs
         cd ~/project/rump-nginx
         make images/full.iso
   - save_cache:
