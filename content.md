@@ -475,7 +475,9 @@ Note:
 <img src="figs/lkl-arch-host.png" width=100%>
 </div>
 
-- environment *dependent* <br>part
+<br>
+
+- environment *dependent* part
  - unify an interface across <br> different platforms
  - (rump-hypercall like)
 - device interface with **Virtio**
@@ -564,7 +566,7 @@ architecture (arch/lkl)
 ### NUSE (Network Stack in UserspacE)
 
 - What ?
- - Install/Use alternate network stack (i.e., TCP/IP)
+ - install/use alternate network stack (i.e., TCP/IP)
  - but it's a full-fledged code (Linux)
  - host network stack isn't involved
 
@@ -593,8 +595,8 @@ architecture (arch/lkl)
  - on hypervisor
  - on userspace program
 - **cross-compile** with alt-libc
- - rumprun (Antti Kantee)
- - frankenlibc (Justin Cormack)
+ - rumprun (by Antti Kantee)
+ - frankenlibc (by Justin Cormack)
 
 - Why ?
  - small footprint
@@ -675,21 +677,22 @@ Note:
 
 >>>
 
-## NAT, packet filter
+## Chaining (NAT + packet filter)
 
 
 <div class="left" style="width: 45%">
+<img src="figs/stdpkt-nat-acl.png" width=100%>
+
 <ul>
 <li>microbenchmark
 <li> netperf, iptables (NAT/ACL)
 <li> measure boot latency
 </ul>
 
-<img src="figs/stdpkt-nat-acl.png" width=100%>
 </div>
 
 
-<div class="right" style="width: 50%">
+<div class="right" style="width: 55%">
 <img src="figs/stdpkt-nat-acl-tcp.png" width=100%>
 TCP googput
 
@@ -820,6 +823,7 @@ Note:
 <br>
 
 Hajime Tazaki (tazaki at iij.ad.jp)
+
 @thehajime
 
 >>>
