@@ -667,7 +667,7 @@ Note:
 <br>
 <br>
 <br>
-<img src="slide-figs/stdpkt-grep-topo.png" width=100%>
+<img src="figs/stdpkt-grep-topo.png" width=100%>
 </div>
 
 
