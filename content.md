@@ -131,7 +131,7 @@ https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-
 
 ## Problems
 
-- more ossification/no innovation  <!-- .element: class="fragment grow" data-fragment-index="1" -->
+- ossification/no innovation  <!-- .element: class="fragment grow" data-fragment-index="1" -->
 - no more end-to-end  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
 - no more experimental platform  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
 - more low-quality codes  <!-- .element: class="fragment shrink" data-fragment-index="1" -->
@@ -303,7 +303,7 @@ Note:
 <br>
 <br>
 - to put a break-through
- - be a part of giant (which I won't)
+ - be a part of giant
  - or thinks differently ?
 
 ---
@@ -343,13 +343,13 @@ Note:
 
 - MegaPipe [OSDI '12]
  - *outperforms baseline Linux .. **582%** (for short connections).*
- - New API for applications (no existing applications benefit)<!-- .element: class="fragment" data-fragment-index="1" -->
+ - New API for applications (no free existing applications benefit)<!-- .element: class="fragment" data-fragment-index="1" -->
 - mTCP [NSDI '14]
  - *improves the performance ... **by a factor of 25** compared to the latest Linux TCP stack*
  - implement with very limited TCP extensions<!-- .element: class="fragment" data-fragment-index="1" -->
 - SandStorm [SIGCOMM '14]
  - *our approach with the FreeBSD and Linux stacks ..., **demonstrating 2-10x** improvements*
- - specialized (no existing applications benefit)<!-- .element: class="fragment" data-fragment-index="1" -->
+ - specialized (no free existing applications benefit)<!-- .element: class="fragment" data-fragment-index="1" -->
 - Arrakis [OSDI '14]
  - *improvements of **2-5x in latency and 9x in throughput** .. to a well-tuned Linux implementation.*
  - utilize simplified TCP/IP stack (lwip) (loose feature-rich extensions)<!-- .element: class="fragment" data-fragment-index="1" -->
@@ -436,7 +436,7 @@ Note:
 - run Linux code on various ways
  - with a reusable library
 - h/w dependent layer
- - on Linux/Windows <br>/FreeBSD uspace, <br> unikernel, on UEFI, Android
+ - on Linux/Windows <br>/FreeBSD/Android uspace, <br> unikernel, on UEFI
  - network simulator (ns-3)
 - code
  - 2.4KLoC (h/w independent)
@@ -461,11 +461,6 @@ Note:
 <div class="right" style="width: 40%">
 <img src="figs/lkl-arch-new.png" width=100%>
 </div>
-
->>>
-
-<img src="figs/lkl-arch-new.png" width=30%>
-<img src="figs/baremetal-rumpstack.png" width=60%>
 
 >>>
 
@@ -529,6 +524,9 @@ architecture (arch/lkl)
 <div class="right" style="width: 30%">
 <img src="figs/lkl-syscall-1.png" width=100%>
 </div>
+
+Note:
+more stable impl. of FUSE
 
 >>>
 ### API 2: hijack host standard library
@@ -651,11 +649,9 @@ Note:
 ## How ping looks like ?
 
 - generate raw data to stdout
-- next program can receive <br> from stdin
+- next program can receive from stdin
 
-<div class="right" style="width: 50%">
-<img src="figs/ping-stdpkt.gif" width=100%>
-</div>
+<img src="figs/ping-stdpkt.gif" width=60%>
 
 >>>
 
@@ -810,6 +806,18 @@ Note:
 
 >>>
 
+## References
+
+- Code
+ - https://github.com/lkl/linux (LKL)
+ - https://github.com/libos-nuse/frankenlibc
+ - https://github.com/libos-nuse/rumprun
+- Articles
+ - https://github.com/thehajime/blog/issues/3 (blog)
+ - http://www.iij-ii.co.jp/en/lab/researchers/tazaki/ (my info)
+
+>>>
+
 
 <br>
 <br>
@@ -826,17 +834,6 @@ Hajime Tazaki (tazaki at iij.ad.jp)
 
 @thehajime
 
->>>
-
-## References
-
-- Code
- - https://github.com/lkl/linux (LKL)
- - https://github.com/libos-nuse/frankenlibc
- - https://github.com/libos-nuse/rumprun
-- Articles
- - https://github.com/thehajime/blog/issues/3 (blog)
- - http://www.iij-ii.co.jp/en/lab/researchers/tazaki/ (my info)
 
 ---
 
@@ -916,4 +913,25 @@ reimplementation of timer API is required for simulation's feature, time warp
 
 </section>
 
+>>>
+
+## LKL: current status
+
+- Sent RFC (Nov. 2015)
+ - no update on LKML since then
+- have evolved a lot
+ - fast syscall path
+ - offload (csum, TSO/LRO)
+ - CONFIG_SMP (WIP)
+ - json config
+ - qemu baremetal (unikernel)
+ - on UEFI
+
+
+https://github.com/lkl/linux
+
+>>>
+
+<img src="figs/lkl-arch-new.png" width=30%>
+<img src="figs/baremetal-rumpstack.png" width=60%>
 
