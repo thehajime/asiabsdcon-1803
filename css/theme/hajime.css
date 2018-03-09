@@ -89,6 +89,7 @@ body {
 
 /* Ensure certain elements are never larger than the slide itself */
 .reveal img, .reveal video, .reveal iframe {
+  cursor: pointer;
   max-width: 95%;
   max-height: 95%; }
 
@@ -235,6 +236,8 @@ body {
  *********************************************/
 .reveal section img {
   cursor: pointer;
+  content: "click me!";
+  onclick: window.open(this.src, '_blank');
   margin: 15px 0px;
   background: rgba(255, 255, 255, 0.12);
   border: 4px solid #eee;

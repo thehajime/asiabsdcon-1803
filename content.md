@@ -274,7 +274,8 @@ Note:
 ## Ossification: can others deploy such a way ?
 
 - no <!-- .element: class="fragment" data-fragment-index="1" -->
-- only a giant can <!-- .element: class="fragment" data-fragment-index="1" -->
+- only create another universe
+- only giants can <!-- .element: class="fragment" data-fragment-index="1" -->
 
 <div class="left" style="width: 50%">
 <img src="figs/giant-dora.jpg" width=100%> <!-- .element: class="fragment" data-fragment-index="1" -->
@@ -658,18 +659,11 @@ Note:
 ### grep command as firewall
 
 
-<div class="left" style="width: 40%">
-<br>
-<br>
-<br>
-<br>
-<img src="figs/stdpkt-grep-topo.png" width=100%>
-</div>
+<img src="figs/stdpkt-grep-topo.png" width=70%>
 
+>>>
 
-<div class="right" style="width: 60%">
-<img src="figs/stdpkt-grep-acl.gif" width=100%>
-</div>
+<img src="figs/stdpkt-grep-acl.gif" width=75% onclick="window.open(this.src, '_blank');">
 
 >>>
 
@@ -689,10 +683,10 @@ Note:
 
 
 <div class="right" style="width: 55%">
-<img src="figs/stdpkt-nat-acl-tcp.png" width=100%>
+<img src="figs/stdpkt-nat-acl-tcp.png" width=100% onclick="window.open(this.src, '_blank');">
 TCP googput
 
-<img src="figs/stdpkt-boot-latency.png" width=100%>
+<img src="figs/stdpkt-boot-latency.png" width=100%  onclick="window.open(this.src, '_blank');">
 Boot latency
 </div>
 
@@ -713,7 +707,7 @@ Boot latency
 
 <div class="right" style="width: 45%">
  <!-- img src="figs/dce-arch.png" /-->
- <video data-autoplay src="figs/ns-3-dce-mptcp-linux3.5.7-8subf.m4v"></video>
+ <video data-autoplay src="figs/ns-3-dce-mptcp-linux3.5.7-8subf.m4v" onclick="window.open(this.src, '_blank');"></video>
 </div>
 
 Note:
