@@ -652,12 +652,12 @@ Note:
 
 >>>
 
-## How ping looks like ?
+### How ping looks like ?
 
 - generate raw data to stdout
 - next program can receive from stdin
 
-<img src="figs/ping-stdpkt.gif" width=60%>
+<img src="figs/ping-stdpkt.gif" width=70% onclick="window.open(this.src, '_blank');">
 
 >>>
 
