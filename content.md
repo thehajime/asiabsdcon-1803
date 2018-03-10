@@ -39,6 +39,10 @@ Note:
 
 >>>
 
+<img src="figs/baran-distributed.png" width=120%/>
+
+>>>
+
 ## The original Internet
 
   <img src="figs/baran-distributed.png" width=70%/>
@@ -125,7 +129,7 @@ https://www.slideshare.net/obonaventure/innovation-is-back-in-the-transport-and-
 
 ---
 
-## What's the matter ?
+# What's the matter ?
 
 >>>
 
@@ -274,21 +278,22 @@ Note:
 ## Ossification: can others deploy such a way ?
 
 - no <!-- .element: class="fragment" data-fragment-index="1" -->
-- only create another universe
-- only giants can <!-- .element: class="fragment" data-fragment-index="1" -->
+- only by creating another universe <!-- .element: class="fragment" data-fragment-index="1" -->
 
 <div class="left" style="width: 50%">
 <img src="figs/giant-dora.jpg" width=100%> <!-- .element: class="fragment" data-fragment-index="1" -->
 </div>
 
+Note:
+- only giants can <!-- .element: class="fragment" data-fragment-index="1" -->
+
 
 >>>
 
-## If you face obstacles
+## If you face obstacles...
 
 - you would implement from scratch
  - as a name of *specialization*
-
 - lack of maturity of an OS history
 - more low-quality codes
 - more waste of time (reinventing a wheel)
@@ -826,7 +831,7 @@ Note:
 
 Hajime Tazaki (tazaki at iij.ad.jp)
 
-@thehajime
+[@thehajime](https://twitter.com/thehajime)
 
 
 ---
