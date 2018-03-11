@@ -154,7 +154,7 @@ https://pixabay.com/en/question-problem-think-thinking-622164/
 ## Protocol ossification
 - two obstacles for new protocol deployment
  1. middlebox
- 1. host OS
+ 1. host operating system
 
 >>>
 
