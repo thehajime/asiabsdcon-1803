@@ -14,6 +14,10 @@ IIJ Research Laboratory
 March, 2018, AsiaBSDCon 2018
 </span>
 
+<small>
+- slide source <br>
+https://github.com/thehajime/asiabsdcon-1803/
+
 ---
 
 ## Intro
@@ -657,7 +661,10 @@ Note:
 - generate raw data to stdout
 - next program can receive from stdin
 
-<img src="figs/ping-stdpkt.gif" width=70% onclick="window.open(this.src, '_blank');">
+<img src="figs/ping-stdpkt.gif" width=60% onclick="window.open(this.src, '_blank');">
+
+<small>
+https://github.com/thehajime/blog/issues/3
 
 >>>
 
@@ -669,6 +676,9 @@ Note:
 >>>
 
 <img src="figs/stdpkt-grep-acl.gif" width=75% onclick="window.open(this.src, '_blank');">
+
+<small>
+https://github.com/thehajime/blog/issues/3
 
 >>>
 
